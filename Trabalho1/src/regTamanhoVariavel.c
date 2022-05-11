@@ -4,10 +4,3 @@
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
-#include <file.h>
-
-FILE *createFile(char *fileName) {
-    FILE *f = fopen(fileName, "wb");
-
-    return f;
-}

@@ -4,10 +4,12 @@
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
-#include <file.h>
+#ifndef REGTAMANHOFIXO_H
+#define REGTAMANHOFIXO_H
 
-FILE *createFile(char *fileName) {
-    FILE *f = fopen(fileName, "wb");
+typedef struct regTamanhoFixo {
+    
 
-    return f;
-}
+} regFixo;
+
+#endif // #REGTAMANHOFIXO_H

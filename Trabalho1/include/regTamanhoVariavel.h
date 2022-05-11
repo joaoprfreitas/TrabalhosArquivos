@@ -4,10 +4,11 @@
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
-#include <file.h>
+#ifndef REGTAMANHOVARIAVEL_H
+#define REGTAMANHOVARIAVEL_H
 
-FILE *createFile(char *fileName) {
-    FILE *f = fopen(fileName, "wb");
+typedef struct regTamanhoVariavel {
 
-    return f;
-}
+} regVariavel;
+
+#endif // #REGTAMANHOFIXO_H
