@@ -42,22 +42,6 @@ char *lerString(FILE *f, char parada, bool *fimArquivo) {
     return linha;
 }
 
-data_t *readCSV(char *name) {
-    data_t *data;
-
-    FILE *f = fopen(name, "r");
-    if (f == NULL) {
-        printf("Erro ao abrir o arquivo\n");
-        return NULL;
-    }
-
-    bool fimArquivo = false;
-
-    while(!fimArquivo) {
-        //TODO
-    }
-
-}
 
 
     

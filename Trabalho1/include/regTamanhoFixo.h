@@ -7,6 +7,9 @@
 #ifndef REGTAMANHOFIXO_H
 #define REGTAMANHOFIXO_H
 
+#include <string.h>
+#include <stdio.h>
+
 #define TAM_DESCRICAO 40
 #define TAM_DESC1 22
 #define TAM_DESC2 19
@@ -22,18 +25,18 @@ typedef struct regCabecalhoFixo {
     char status; // '0' para inconsistente, '1' para consistente
     int topo;
     
-    char descricao[TAM_DESCRICAO + 1] = "LISTAGEM DA FROTA DOS VEICULOS NO BRASIL";
-    char desC1[TAM_DESC1 + 1] = "CODIGO IDENTIFICADOR: ";
-    char desC2[TAM_DESC2 + 1] = "ANO DE FABRICACAO: ";
-    char desC3[TAM_DESC3 + 1] = "QUANTIDADE DE VEICULOS: ";
-    char desC4[TAM_DESC4 + 1] = "ESTADO: ";
+    char descricao[TAM_DESCRICAO + 1];
+    char desC1[TAM_DESC1 + 1];
+    char desC2[TAM_DESC2 + 1];
+    char desC3[TAM_DESC3 + 1];
+    char desC4[TAM_DESC4 + 1];
 
-    char codC5 = '0';
-    char desC5[TAM_DESC5 + 1] = "NOME DA CIDADE: "; 
-    char codC6 = '1';
-    char desC6[TAM_DESC6 + 1] = "MARCA DO VEICULO: ";
-    char codC7 = '2';
-    char desC7[TAM_DESC7 + 1] = "MODELO DO VEICULO: "; 
+    char codC5;
+    char desC5[TAM_DESC5 + 1]; 
+    char codC6;
+    char desC6[TAM_DESC6 + 1];
+    char codC7;
+    char desC7[TAM_DESC7 + 1]; 
 
     int proxRRN;
     int nroRegRem;
@@ -58,5 +61,8 @@ typedef struct regTamanhoFixo {
     char codC7;
     char *modelo;
 } regFixo;
+
+regCabecalhoFixo defaultCabecalhoFixo();
+void setDefaultCabecalhoFixo(FILE *, regCabecalhoFixo);
 
 #endif // #REGTAMANHOFIXO_H
