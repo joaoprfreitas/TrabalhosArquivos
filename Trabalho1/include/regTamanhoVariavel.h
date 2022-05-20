@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <utils.h>
 
 #define TAM_DESCRICAO 40
 #define TAM_DESC1 22
@@ -62,6 +63,8 @@ typedef struct regTamanhoVariavel {
     int tamModelo;
     char codC7;
     char *modelo;
+
+    char *lixo;
 } regVariavel;
 
 regCabecalhoVariavel defaultCabecalhoVariavel();

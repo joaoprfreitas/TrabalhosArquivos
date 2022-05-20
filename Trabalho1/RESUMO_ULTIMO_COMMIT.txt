@@ -1,0 +1,7 @@
+Feita a função de leitura do CSV (testada e funcionando)
+Feita a correção do registro de tamanho fixo a ser escrito no arquivo (colocados os $)
+
+// FAZENDO: A correção para registros variáveis
+         Terminar funcionalidade 1
+
+// TODO: Funcionalidades 2, 3, 4

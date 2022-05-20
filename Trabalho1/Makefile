@@ -1,6 +1,6 @@
 SRC=./src/*.c
 INCLUDE=-I./include/
-BIN=./bin
+BIN=./programaTrab
 
 all:
 	gcc $(SRC) -g -lm -Wall -Werror -Wextra $(INCLUDE) -o $(BIN)

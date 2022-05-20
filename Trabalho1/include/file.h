@@ -14,17 +14,8 @@
 #include <regTamanhoFixo.h>
 #include <regTamanhoVariavel.h>
 
-typedef struct data_st {
-    int id;
-    int ano;
-    int qtt;
-    char sigla[2];
-
-    char *cidade;
-    char *marca;
-    char *modelo;
-} data_t;
-
+FILE *createFile(char *fileName);
+void setRegistroCabecalho(FILE *fileName, char *tipoArquivo);
 
 
 #endif // FILE_H

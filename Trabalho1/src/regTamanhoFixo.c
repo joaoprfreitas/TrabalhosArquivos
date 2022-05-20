@@ -7,6 +7,9 @@
 
 #include <regTamanhoFixo.h>
 
+#define TAM_REG_FIXO 97
+#define TAM_CAMPOS_FIXO 19
+
 void setDefaultCabecalhoFixo(FILE *f, regCabecalhoFixo r) {
     fwrite(&r.status, sizeof(char), 1, f);
     fwrite(&r.topo, sizeof(int), 1, f);
@@ -51,5 +54,72 @@ regCabecalhoFixo defaultCabecalhoFixo() {
     r.proxRRN = 0;
     r.nroRegRem = 0;
 
+    return r;
+}
+
+// TODO: verificar se os campos cidade, marca, modelo existem
+// se não, não inserir
+void addRegistroFixo(FILE *f, regFixo r) {
+    fwrite(&r.removido, sizeof(char), 1, f);
+    fwrite(&r.prox, sizeof(int), 1, f);
+
+    fwrite(&r.id, sizeof(int), 1, f);
+    fwrite(&r.ano, sizeof(int), 1, f);
+    fwrite(&r.qtt, sizeof(int), 1, f);
+    
+    fwrite(&r.sigla, sizeof(char), 2, f);
+
+    fwrite(&r.tamCidade, sizeof(int), 1, f);
+    fwrite(&r.codC5, sizeof(char), 1, f);
+    fwrite(&r.cidade, sizeof(char), &r.tamCidade, f);
+
+    fwrite(&r.tamMarca, sizeof(int), 1, f);
+    fwrite(&r.codC6, sizeof(char), 1, f);
+    fwrite(&r.marca, sizeof(char), &r.tamMarca, f);
+
+    fwrite(&r.tamModelo, sizeof(int), 1, f);
+    fwrite(&r.codC7, sizeof(char), 1, f);
+    fwrite(&r.modelo, sizeof(char), &r.tamModelo, f);
+}
+
+regFixo formatRegistroFixo(data_t *data) {
+    regFixo r;
+    char *lixo = NULL;
+    
+    r.removido = '0';
+    r.prox = -1;
+
+    r.id = data->id;
+    r.ano = data->ano;
+    r.qtt = data->qtt;
+    strcpy(r.sigla, data->sigla);
+
+    int contadorAux = 0;
+    if (strcmp(data->cidade, "")) {
+        r.tamCidade = strlen(data->cidade);
+        r.codC5 = '0';
+        r.cidade = strdup(data->cidade);
+
+        contadorAux += sizeof(int) + sizeof(char) + r.tamCidade;
+    }
+    if (strcmp(data->marca, "")) {
+        r.tamMarca = strlen(data->marca);
+        r.codC6 = '1';
+        r.marca = strdup(data->marca);
+        
+        contadorAux += sizeof(int) + sizeof(char) + r.tamMarca;
+    }
+    if (strcmp(data->modelo, "")) {
+        r.tamModelo = strlen(data->modelo);
+        r.codC7 = '2';
+        r.modelo = strdup(data->modelo);
+        
+        contadorAux += sizeof(int) + sizeof(char) + r.tamModelo;
+    }
+
+    int tamLixo = TAM_REG_FIXO - TAM_CAMPOS_FIXO - contadorAux;
+    lixo = (char *) malloc(tamLixo);
+    memset(lixo, '$', tamLixo);
+    
     return r;
 }

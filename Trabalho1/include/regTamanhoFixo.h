@@ -9,6 +9,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <utils.h>
 
 #define TAM_DESCRICAO 40
 #define TAM_DESC1 22
@@ -60,6 +61,9 @@ typedef struct regTamanhoFixo {
     int tamModelo;
     char codC7;
     char *modelo;
+
+
+    char *lixo;
 } regFixo;
 
 regCabecalhoFixo defaultCabecalhoFixo();

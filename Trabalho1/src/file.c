@@ -6,30 +6,16 @@
  */
 #include <file.h>
 
-FILE *createTable(char *fileName, char *tipoArquivo) {
-    if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) {
-        printf("Tipo de arquivo inválido.\n");
-        return NULL;
-    }
-
-    FILE *f = createFile(fileName);
-
-    setRegistroCabecalho(f, tipoArquivo);
-
-
-    return f;
-}
-
 // TODO: QUANDO FOR FECHAR O ARQUIVO, SETAR NO STATUS NO ARQUIVO PARA '1'
-void setRegistroCabecalho(FILE *f, char *tipoArquivo) {
+void setRegistroCabecalho(FILE *file, char *tipoArquivo) {
     // Seta tipo 1
     if (!(strcmp(tipoArquivo, "tipo1"))) {
-        setDefaultCabecalhoFixo(f, defaultCabecalhoFixo());
+        setDefaultCabecalhoFixo(file, defaultCabecalhoFixo());
         return;
     }
 
     // Seta tipo 2
-    setDefaultCabecalhoVariavel(f, defaultCabecalhoVariavel());
+    setDefaultCabecalhoVariavel(file, defaultCabecalhoVariavel());
     
 }
 
@@ -42,19 +28,19 @@ FILE *createFile(char *fileName) {
     return f;
 }
 
-data_t *readCSV(char *name) {
-    data_t *data;
-
-    FILE *f = fopen(name, "r");
-    if (f == NULL) {
-        printf("Erro ao abrir o arquivo\n");
-        return NULL;
+void setFileData(FILE *file, char *tipoArquivo) {
+    if (!(strcmp(tipoArquivo, "tipo1"))) {
+        setDataRegistroFixo(file);
+        return;
     }
 
-    bool fimArquivo = false;
+    setDataRegistroVariavel(file);
+}
 
-    while(!fimArquivo) {
-        //TODO
-    }
+void setDataRegistroFixo(FILE *file) {
 
+}
+
+void setDataRegistroVariavel(FILE *file) {
+    
 }

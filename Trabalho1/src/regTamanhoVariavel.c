@@ -54,3 +54,6 @@ regCabecalhoVariavel defaultCabecalhoVariavel() {
     return r;
 }
 
+regVariavel formatRegistroFixo(data_t *data) {
+    
+}

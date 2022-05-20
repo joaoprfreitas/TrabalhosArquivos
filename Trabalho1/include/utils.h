@@ -9,5 +9,22 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct data_st {
+    int id;
+    int ano;
+    int qtt;
+    char sigla[2];
+
+    char *cidade;
+    char *marca;
+    char *modelo;
+} data_t;
+
+char *lerString(FILE *f, char parada, bool *fimArquivo);
+bool readLineCSV(FILE *csvFileName, data_t *data);
+void readCSVTest();
 
 #endif // UTILS_H
