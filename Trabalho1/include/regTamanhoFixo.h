@@ -62,11 +62,13 @@ typedef struct regTamanhoFixo {
     char codC7;
     char *modelo;
 
-
-    char *lixo;
+    int tamLixo;
 } regFixo;
 
 regCabecalhoFixo defaultCabecalhoFixo();
 void setDefaultCabecalhoFixo(FILE *, regCabecalhoFixo);
+void addRegistroFixo(FILE *f, regFixo *r);
+regFixo formatRegistroFixo(data_t *data);
+void changeStatusToSafe(FILE *f);
 
 #endif // #REGTAMANHOFIXO_H

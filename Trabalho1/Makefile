@@ -1,9 +1,9 @@
 SRC=./src/*.c
 INCLUDE=-I./include/
 BIN=./programaTrab
-
+EXTRA_FLAGS = -Wall -Werror -Wextra
 all:
-	gcc $(SRC) -g -lm -Wall -Werror -Wextra $(INCLUDE) -o $(BIN)
+	gcc $(SRC) -g -lm $(INCLUDE) -o $(BIN)
 
 run:
 	$(BIN)

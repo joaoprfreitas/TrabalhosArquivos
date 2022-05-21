@@ -7,6 +7,8 @@
 
 #include <regTamanhoVariavel.h>
 
+#define TAM_CAMPO_FIXO 27
+
 void setDefaultCabecalhoVariavel(FILE *f, regCabecalhoVariavel r) {
     fwrite(&r.status, sizeof(char), 1, f);
     fwrite(&r.topo, sizeof(long long int), 1, f);
@@ -54,6 +56,65 @@ regCabecalhoVariavel defaultCabecalhoVariavel() {
     return r;
 }
 
-regVariavel formatRegistroFixo(data_t *data) {
-    
+void addRegistroVariavel(FILE *f, regVariavel r) {
+    fwrite(&r.removido, sizeof(char), 1, f);
+    fwrite(&r.tamanhoRegistro, sizeof(int), 1, f);
+    fwrite(&r.prox, sizeof(long long int), 1, f);
+
+    fwrite(&r.id, sizeof(int), 1, f);
+    fwrite(&r.ano, sizeof(int), 1, f);
+    fwrite(&r.qtt, sizeof(int), 1, f);
+
+    fwrite(&r.sigla, sizeof(char), TAM_SIGLA, f);
+
+
+    // verificar se ta escrevendo ou nao
+    fwrite(&r.tamCidade, sizeof(int), 1, f);
+    fwrite(&r.codC5, sizeof(char), 1, f);
+    fwrite(&r.cidade, sizeof(char), r.tamCidade, f);
+
+    fwrite(&r.tamMarca, sizeof(int), 1, f);
+    fwrite(&r.codC6, sizeof(char), 1, f);
+    fwrite(&r.marca, sizeof(char), r.tamMarca, f);
+
+    fwrite(&r.tamModelo, sizeof(int), 1, f);
+    fwrite(&r.codC7, sizeof(char), 1, f);
+    fwrite(&r.modelo, sizeof(char), r.tamModelo, f);
+}
+
+regVariavel formatRegistroVariavel(data_t *data) {
+    regVariavel r;
+
+    r.removido = '0';
+
+    r.prox = -1;
+
+    r.id = data->id;
+    r.ano = data->ano;
+    r.qtt = data->qtt;
+    strcpy(r.sigla, data->sigla);
+
+    int contadorAux = 0;
+    if (strcmp(data->cidade, "")) { // Se não for vazio
+        r.tamCidade = strlen(data->cidade);
+        r.codC5 = '0';
+        r.cidade = strdup(data->cidade);
+        contadorAux += sizeof(int) + sizeof(char) + r.tamCidade;
+    }
+    if (strcmp(data->marca, "")) { // Se não for vazio
+        r.tamMarca = strlen(data->marca);
+        r.codC6 = '1';
+        r.marca = strdup(data->marca);
+        contadorAux += sizeof(int) + sizeof(char) + r.tamMarca;
+    }
+    if (strcmp(data->modelo, "")) { // Se não for vazio
+        r.tamModelo = strlen(data->modelo);
+        r.codC7 = '2';
+        r.modelo = strdup(data->modelo);
+        contadorAux += sizeof(int) + sizeof(char) + r.tamModelo;
+    }
+
+    r.tamanhoRegistro = contadorAux + TAM_CAMPO_FIXO;
+
+    return r;
 }

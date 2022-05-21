@@ -12,6 +12,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define CSV_ENDLINE '\n'
+
 typedef struct data_st {
     int id;
     int ano;

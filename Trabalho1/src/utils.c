@@ -8,7 +8,6 @@
 #include <utils.h>
 
 #define CSV_DELIMITER ","
-#define CSV_ENDLINE '\n'
 #define CSV_COLS 7
 #define BUFFER_SIZE 32
 
