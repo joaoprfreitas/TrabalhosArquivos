@@ -48,7 +48,7 @@ typedef struct regCabecalhoVariavel {
 // Deve ocupar 97 bytes
 typedef struct regTamanhoVariavel {
     char removido;
-    int tamanhoRegistro; //
+    int tamanhoRegistro;
     long long int prox;
     int id;
     int ano;
@@ -68,7 +68,7 @@ typedef struct regTamanhoVariavel {
 regCabecalhoVariavel defaultCabecalhoVariavel();
 void setDefaultCabecalhoVariavel(FILE *, regCabecalhoVariavel);
 
-void addRegistroVariavel(FILE *f, regVariavel r);
+void addRegistroVariavel(FILE *f, regVariavel *r);
 regVariavel formatRegistroVariavel(data_t *data);
 
 #endif // #REGTAMANHOFIXO_H

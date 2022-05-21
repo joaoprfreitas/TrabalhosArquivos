@@ -90,9 +90,13 @@ void setDataRegistroVariavel(FILE *file, char *csvFileName) {
             break;
         }
 
-        addRegistroVariavel(file, formatRegistroVariavel(&data));
+        regVariavel r = formatRegistroVariavel(&data);
 
+        addRegistroVariavel(file, &r);
 
+        free(r.cidade);
+        free(r.marca);
+        free(r.modelo);
 
         free(data.cidade);
         free(data.marca);
