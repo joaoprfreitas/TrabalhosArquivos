@@ -8,6 +8,7 @@
 
 void setDataRegistroFixo(FILE *file, char *csvFileName);
 void setDataRegistroVariavel(FILE *file, char *csvFileName);
+char getStatus(FILE *f);
 
 // TODO: QUANDO FOR FECHAR O ARQUIVO, SETAR NO STATUS NO ARQUIVO PARA '1'
 void setRegistroCabecalho(FILE *file, char *tipoArquivo) {
@@ -115,7 +116,16 @@ FILE *openBinFile(char *fileName) {
     return f;
 }
 
+char getStatus(FILE *f) {
+    fseek(f, 0, SEEK_SET);
+    char status;
+    fread(&status, sizeof(char), 1, f);
+    return status;
+}
+
 int lerTodosRegistros(FILE *f, char *tipoArquivo) {
+    if (getStatus(f) == '0') return -2; // Arquivo inconsistente
+
     if (!(strcmp(tipoArquivo, "tipo1"))) {
         return lerTodosRegistrosFixos(f);
     }

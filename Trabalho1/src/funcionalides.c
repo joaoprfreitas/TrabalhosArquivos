@@ -2,7 +2,7 @@
 
 void createTable(char *fileName, char *tipoArquivo, char *csvFileName) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) {
-        printf("Tipo de arquivo inválido.\n");
+        printf("Falha no processamento do arquivo.\n");
         return;
     }
 
@@ -19,7 +19,7 @@ void createTable(char *fileName, char *tipoArquivo, char *csvFileName) {
 
 void listarTodosRegistros(char *binFileName, char *tipoArquivo) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) {
-        printf("Tipo de arquivo inválido.\n");
+        printf("Falha no processamento do arquivo.\n");
         return;
     }
 
@@ -27,9 +27,12 @@ void listarTodosRegistros(char *binFileName, char *tipoArquivo) {
     
     if (f == NULL) return;
 
+    int codigo = lerTodosRegistros(f, tipoArquivo);
 
-    if (lerTodosRegistros(f, tipoArquivo) == -1)
+    if (codigo == -1)
         printf("Registro inexistente.\n");
+    else if (codigo == -2)
+        printf("Falha no processamento do arquivo.\n");
 
     fclose(f);
 }
