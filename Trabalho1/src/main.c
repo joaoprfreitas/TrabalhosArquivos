@@ -186,12 +186,14 @@ int main() {
             scanf("%s\r\n", nomeBin);
 
             createTable(nomeBin, tipoArquivo, nomeCSV);
-            binarioNaTela(nomeBin);
 
-            /* code */
+            binarioNaTela(nomeBin);
             break;
         case 2:
-            /* code */
+            scanf("%s\r\n", nomeBin);
+
+            listarTodosRegistros(nomeBin, tipoArquivo);
+            
             break;
         case 3:
             /* code */

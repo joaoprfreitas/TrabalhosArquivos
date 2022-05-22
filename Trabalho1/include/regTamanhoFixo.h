@@ -70,5 +70,7 @@ void setDefaultCabecalhoFixo(FILE *, regCabecalhoFixo);
 void addRegistroFixo(FILE *f, regFixo *r);
 regFixo formatRegistroFixo(data_t *data);
 void changeStatusToSafe(FILE *f);
+int getNumeroRegistro(FILE *f);
+int lerTodosRegistrosFixos(FILE *f);
 
 #endif // #REGTAMANHOFIXO_H

@@ -9,8 +9,13 @@
 
 #define TAM_CAMPO_FIXO 22 // desconsiderando os campos removido e tamanho do registro
 #define POS_CABECALHO_PROXIMO_BYTE_OFFSET 178
+#define TAM_CABECALHO_VARIAVEL 190
 
 long long int proxByteOffSet = 0;
+
+regVariavel *lerRegistroVariavel(FILE *f);
+void imprimirRegistroVariavel(regVariavel *r);
+void freeRegistroVariavel(regVariavel *r);
 
 void setDefaultCabecalhoVariavel(FILE *f, regCabecalhoVariavel r) {
     fwrite(&r.status, sizeof(char), 1, f);
@@ -142,4 +147,136 @@ regVariavel formatRegistroVariavel(data_t *data) {
     r.tamanhoRegistro = contadorAux + TAM_CAMPO_FIXO;
 
     return r;
+}
+
+long long int getProxByteOffset(FILE *f) {
+    long long int proxByteOffset;
+
+    fseek(f, POS_CABECALHO_PROXIMO_BYTE_OFFSET, SEEK_SET);
+    fread(&proxByteOffset, sizeof(long long int), 1, f);
+
+    return proxByteOffset;
+}
+
+int lerTodosRegistrosVariaveis(FILE *f) {
+    int proxByteOffSet = getProxByteOffset(f);
+    if (proxByteOffSet == 0) return -1;
+
+    fseek(f, TAM_CABECALHO_VARIAVEL, SEEK_SET);
+
+    do {
+
+        regVariavel *r = lerRegistroVariavel(f);
+        imprimirRegistroVariavel(r);
+        freeRegistroVariavel(r);
+
+    } while(proxByteOffSet != ftell(f));
+
+    return 0;
+}
+
+regVariavel *lerRegistroVariavel(FILE *f) {
+    regVariavel *r = malloc(sizeof(regVariavel));
+
+    fread(&r->removido, sizeof(char), 1, f);
+    fread(&r->tamanhoRegistro, sizeof(int), 1, f);
+
+    fread(&r->prox, sizeof(long long int), 1, f);
+    fread(&r->id, sizeof(int), 1, f);
+    fread(&r->ano, sizeof(int), 1, f);
+    fread(&r->qtt, sizeof(int), 1, f);
+    fread(r->sigla, sizeof(char), TAM_SIGLA, f);
+
+    r->tamCidade = -1;
+    r->tamMarca = -1;
+    r->tamModelo = -1;
+
+    int contadorAux = TAM_CAMPO_FIXO;
+    while (r->tamanhoRegistro > contadorAux) {
+        int tamanhoAux;
+        char codigoAux;
+
+        fread(&tamanhoAux, sizeof(int), 1, f);
+        fread(&codigoAux, sizeof(char), 1, f);
+
+        switch (codigoAux) {
+            case '0':
+                r->tamCidade = tamanhoAux;
+                r->codC5 = codigoAux;
+                r->cidade = malloc(sizeof(char) * (r->tamCidade + 1));
+                fread(r->cidade, sizeof(char), r->tamCidade, f);
+                r->cidade[r->tamCidade] = '\0';
+                break;
+            case '1':
+                r->tamMarca = tamanhoAux;
+                r->codC6 = codigoAux;
+                r->marca = malloc(sizeof(char) * (r->tamMarca + 1));
+                fread(r->marca, sizeof(char), r->tamMarca, f);
+                r->marca[r->tamMarca] = '\0';
+                break;
+            case '2':
+                r->tamModelo = tamanhoAux;
+                r->codC7 = codigoAux;
+                r->modelo = malloc(sizeof(char) * (r->tamModelo + 1));
+                fread(r->modelo, sizeof(char), r->tamModelo, f);
+                r->modelo[r->tamModelo] = '\0';
+                break;
+            
+            default:
+                break;
+        }
+
+        contadorAux += sizeof(int) + sizeof(char) + tamanhoAux;
+    }
+
+    return r;
+}
+
+void imprimirRegistroVariavel(regVariavel *r) {
+    if (r->removido == '1') return;
+
+    if (r->tamMarca == -1) {
+        printf("MARCA DO VEICULO: NAO PREENCHIDO\n");
+    } else {
+        printf("MARCA DO VEICULO: %s\n", r->marca);
+    }
+
+    if (r->tamModelo == -1) {
+        printf("MODELO DO VEICULO: NAO PREENCHIDO\n");
+    } else {
+        printf("MODELO DO VEICULO: %s\n", r->modelo);
+    }
+
+    if (r->ano == -1) {
+        printf("ANO DE FABRICACAO: NAO PREENCHIDO\n");
+    } else {
+        printf("ANO DE FABRICACAO: %d\n", r->ano);
+    }
+
+    if (r->tamCidade == -1) {
+        printf("NOME DA CIDADE: NAO PREENCHIDO\n");
+    } else {
+        printf("NOME DA CIDADE: %s\n", r->cidade);
+    }
+
+    if (r->qtt == -1) {
+        printf("QUANTIDADE DE VEICULOS: NAO PREENCHIDO\n");
+    } else {
+        printf("QUANTIDADE DE VEICULOS: %d\n", r->qtt);
+    }
+
+    printf("\n");
+}
+
+void freeRegistroVariavel(regVariavel *r) {
+    if (r->tamMarca != -1) {
+        free(r->marca);
+    }
+    if (r->tamModelo != -1) {
+        free(r->modelo);
+    }
+    if (r->tamCidade != -1) {
+        free(r->cidade);
+    }
+    free(r);
 }

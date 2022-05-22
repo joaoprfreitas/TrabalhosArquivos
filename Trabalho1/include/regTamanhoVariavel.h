@@ -70,5 +70,6 @@ void setDefaultCabecalhoVariavel(FILE *, regCabecalhoVariavel);
 
 void addRegistroVariavel(FILE *f, regVariavel *r);
 regVariavel formatRegistroVariavel(data_t *data);
+int lerTodosRegistrosVariaveis(FILE *f);
 
 #endif // #REGTAMANHOFIXO_H

@@ -5,5 +5,6 @@
 #include <file.h>
 
 void createTable(char *fileName, char *tipoArquivo, char *csvFileName);
+void listarTodosRegistros(char *binFileName, char *tipoArquivo);
 
 #endif // FUNCIONALIDADES

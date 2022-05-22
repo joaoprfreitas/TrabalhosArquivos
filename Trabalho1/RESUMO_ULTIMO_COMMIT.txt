@@ -1,3 +1,8 @@
 DONE: Funcionalidade 1
+      Funcionalidade 2
 
-TODO: Funcionalidades 2, 3, 4
+TODO: Funcionalidade 3
+      Funcionalidade 4
+      Verificar todas as mensagens de erro
+      Reajustar o código
+      Remover variáveis globais

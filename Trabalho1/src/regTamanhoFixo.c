@@ -7,11 +7,16 @@
 
 #include <regTamanhoFixo.h>
 
-#define TAM_REG_FIXO 97
+#define TAM_REGISTRO_FIXO 97
 #define TAM_CAMPOS_FIXO 19
 #define POS_CABECALHO_PROXIMO_RRN 174
+#define TAM_CABECALHO 182
 
 int proxRRN = 0;
+
+void freeRegistroFixo(regFixo *r);
+void imprimirRegistroFixo(regFixo *r);
+regFixo *lerRegistroFixo(FILE *f, int RRN);
 
 void setDefaultCabecalhoFixo(FILE *f, regCabecalhoFixo r) {
     fwrite(&r.status, sizeof(char), 1, f);
@@ -144,7 +149,7 @@ regFixo formatRegistroFixo(data_t *data) {
         r.tamModelo = -1;
     }
 
-    r.tamLixo = TAM_REG_FIXO - TAM_CAMPOS_FIXO - contadorAux;
+    r.tamLixo = TAM_REGISTRO_FIXO - TAM_CAMPOS_FIXO - contadorAux;
     
     return r;
 }
@@ -153,4 +158,143 @@ void changeStatusToSafe(FILE *f) {
     fseek(f, 0, SEEK_SET);
     char status = '1';
     fwrite(&status, sizeof(char), 1, f);
+}
+
+int getNumeroRegistro(FILE *f) {
+    int numTotalRRN;
+    fseek(f, POS_CABECALHO_PROXIMO_RRN, SEEK_SET);
+    fread(&numTotalRRN, sizeof(int), 1, f);
+
+    return numTotalRRN - 1;
+}
+
+int lerTodosRegistrosFixos(FILE *f) {
+    int numTotalRRN = getNumeroRegistro(f);
+
+    if (numTotalRRN == 0) return -1;
+
+    for (int i = 0; i <= numTotalRRN; i++) {
+        regFixo *r = lerRegistroFixo(f, i);
+        imprimirRegistroFixo(r);
+        freeRegistroFixo(r);
+    }
+
+    return 0;
+}
+
+// Verificar com monitor se pode deixar a função mais genérica
+// porém com fseek toda hora
+// em vez de ir lendo sequencialmente
+regFixo *lerRegistroFixo(FILE *f, int RRN) {
+    regFixo *r = malloc(sizeof(regFixo));
+    fseek(f, TAM_CABECALHO + (TAM_REGISTRO_FIXO * RRN), SEEK_SET);
+
+    fread(&r->removido, sizeof(char), 1, f);
+    fread(&r->prox, sizeof(int), 1, f);
+    fread(&r->id, sizeof(int), 1, f);
+    fread(&r->ano, sizeof(int), 1, f);
+    fread(&r->qtt, sizeof(int), 1, f);
+    fread(r->sigla, sizeof(char), 2, f);
+
+    char testeExistencia[4]; // REFLETIR 4 ou 5?
+    int tamanhoAux;
+    char codigoAux;
+
+    r->tamCidade = -1;
+    r->tamMarca = -1;
+    r->tamModelo = -1;
+    
+    for (int i = 0; i < 3; i++) {
+        fread(&testeExistencia, sizeof(char), 4, f);
+
+        if (strcmp(testeExistencia, "$$$$") == 0) { // Se não existir nada
+            break;
+        }
+
+        
+        fseek(f, -4, SEEK_CUR);
+
+        fread(&tamanhoAux, sizeof(int), 1, f);
+        fread(&codigoAux, sizeof(char), 1, f);
+
+        switch (codigoAux) {
+            case '0':
+                r->tamCidade = tamanhoAux;
+                r->codC5 = codigoAux;
+                r->cidade = malloc(sizeof(char) * (r->tamCidade + 1));
+                fread(r->cidade, sizeof(char), r->tamCidade, f);
+                r->cidade[r->tamCidade] = '\0';
+                break;
+
+            case '1':
+                r->tamMarca = tamanhoAux;
+                r->codC6 = codigoAux;
+                r->marca = malloc(sizeof(char) * (r->tamMarca + 1));
+                fread(r->marca, sizeof(char), r->tamMarca, f);
+                r->marca[r->tamMarca] = '\0';
+                break;
+            
+            case '2':
+                r->tamModelo = tamanhoAux;
+                r->codC7 = codigoAux;
+                r->modelo = malloc(sizeof(char) * (r->tamModelo + 1));
+                fread(r->modelo, sizeof(char), r->tamModelo, f);
+                r->modelo[r->tamModelo] = '\0';
+                break;
+            
+            default:
+                break;
+        }
+    }
+
+    return r;
+}
+
+void imprimirRegistroFixo(regFixo *r) {
+    if (r->removido == '1') return;
+    
+    if (r->tamMarca == -1) {
+        printf("MARCA DO VEICULO: NAO PREENCHIDO\n");
+    } else {
+        printf("MARCA DO VEICULO: %s\n", r->marca);
+    }
+
+    if (r->tamModelo == -1) {
+        printf("MODELO DO VEICULO: NAO PREENCHIDO\n");
+    } else {
+        printf("MODELO DO VEICULO: %s\n", r->modelo);
+    }
+
+    if (r->ano == -1) {
+        printf("ANO DE FABRICACAO: NAO PREENCHIDO\n");
+    } else {
+        printf("ANO DE FABRICACAO: %d\n", r->ano);
+    }
+
+    if (r->tamCidade == -1) {
+        printf("NOME DA CIDADE: NAO PREENCHIDO\n");
+    } else {
+        printf("NOME DA CIDADE: %s\n", r->cidade);
+    }
+
+    if (r->qtt == -1) {
+        printf("QUANTIDADE DE VEICULOS: NAO PREENCHIDO\n");
+    } else {
+        printf("QUANTIDADE DE VEICULOS: %d\n", r->qtt);
+    }
+
+    printf("\n");
+}
+
+void freeRegistroFixo(regFixo *r) {
+    if (r->tamMarca != -1) {
+        free(r->marca);
+    }
+    if (r->tamModelo != -1) {
+        free(r->modelo);
+    }
+    if (r->tamCidade != -1) {
+        free(r->cidade);
+    }
+    free(r);
 }

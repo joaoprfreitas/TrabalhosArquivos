@@ -105,3 +105,20 @@ void setDataRegistroVariavel(FILE *file, char *csvFileName) {
 
     fclose(csv);
 }
+
+FILE *openBinFile(char *fileName) {
+    FILE *f = fopen(fileName, "rb");
+    if (f == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return NULL;
+    }
+    return f;
+}
+
+int lerTodosRegistros(FILE *f, char *tipoArquivo) {
+    if (!(strcmp(tipoArquivo, "tipo1"))) {
+        return lerTodosRegistrosFixos(f);
+    }
+
+    return lerTodosRegistrosVariaveis(f);
+}

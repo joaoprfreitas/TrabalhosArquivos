@@ -16,3 +16,20 @@ void createTable(char *fileName, char *tipoArquivo, char *csvFileName) {
 
     fclose(file);
 }
+
+void listarTodosRegistros(char *binFileName, char *tipoArquivo) {
+    if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) {
+        printf("Tipo de arquivo inválido.\n");
+        return;
+    }
+
+    FILE *f = openBinFile(binFileName);
+    
+    if (f == NULL) return;
+
+
+    if (lerTodosRegistros(f, tipoArquivo) == -1)
+        printf("Registro inexistente.\n");
+
+    fclose(f);
+}
