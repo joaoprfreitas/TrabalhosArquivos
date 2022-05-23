@@ -2,7 +2,11 @@ DONE: Funcionalidade 1
       Funcionalidade 2
       Funcionalidade 4
 
+IN PROGRESS: REFATORAÇÃO:
+              - FALTAM: file, funcionalidades, regTamanhoFixo, regTamanhoVariavel
+              - FEITO: utils
+
 TODO: Funcionalidade 3
       Verificar todas as mensagens de erro
-      Reajustar o código
       Remover variáveis globais
+      Verificar atende às especificações do projeto

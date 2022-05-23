@@ -13,8 +13,10 @@
 int main() {
     int funcionalidade;
     char tipoArquivo[20];
+
     char nomeCSV[100];
-    char nomeBin[100];
+    char nomeArquivoBinario[100];
+
     int RRN;
 
     scanf("%d ", &funcionalidade);
@@ -23,33 +25,33 @@ int main() {
     switch (funcionalidade) {
         case 1:
             scanf("%s ", nomeCSV);
-            scanf("%s\r\n", nomeBin);
+            scanf("%s\r\n", nomeArquivoBinario);
 
-            createTable(nomeBin, tipoArquivo, nomeCSV);
+            createTable(nomeArquivoBinario, tipoArquivo, nomeCSV);
 
-            binarioNaTela(nomeBin);
+            binarioNaTela(nomeArquivoBinario);
             break;
+
         case 2:
-            scanf("%s\r\n", nomeBin);
+            scanf("%s\r\n", nomeArquivoBinario);
 
-            listarTodosRegistros(nomeBin, tipoArquivo);
-            
+            listarTodosRegistros(nomeArquivoBinario, tipoArquivo);
             break;
+
         case 3:
             /* code */
             break;
-        case 4:
-            scanf("%s ", nomeBin);
-            scanf("%d\r\n", &RRN);
-            getRegistroFixo(nomeBin, tipoArquivo, RRN);
             
+        case 4:
+            scanf("%s ", nomeArquivoBinario);
+            scanf("%d\r\n", &RRN);
+
+            getRegistroFixo(nomeArquivoBinario, tipoArquivo, RRN);
             break;
     
         default:
             break;
     }
-
-    
 
     return EXIT_SUCCESS;
 }

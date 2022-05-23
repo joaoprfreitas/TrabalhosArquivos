@@ -4,6 +4,7 @@
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
+
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -27,6 +28,5 @@ typedef struct data_st {
 
 char *lerString(FILE *f, char parada, bool *fimArquivo);
 bool readLineCSV(FILE *csvFileName, data_t *data);
-void readCSVTest();
 
 #endif // UTILS_H

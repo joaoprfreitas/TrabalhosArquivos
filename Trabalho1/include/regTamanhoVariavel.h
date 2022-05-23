@@ -4,6 +4,7 @@
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
+
 #ifndef REGTAMANHOVARIAVEL_H
 #define REGTAMANHOVARIAVEL_H
 
