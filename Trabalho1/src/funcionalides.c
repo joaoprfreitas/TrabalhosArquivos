@@ -36,3 +36,30 @@ void listarTodosRegistros(char *binFileName, char *tipoArquivo) {
 
     fclose(f);
 }
+
+void getRegistroFixo(char *nomeArquivoBinario, char *tipoArquivo, int RRN) {
+    if (strcmp(tipoArquivo, "tipo1")) {
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    FILE *f = openBinFile(nomeArquivoBinario);
+
+    if (f == NULL) return;
+
+    if (getStatus(f) == '0' || RRN < 0) {
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+    
+    if (RRN > getNumeroRegistros(f)) {
+        printf("Registro inexistente.\n");
+        return;
+    }
+
+    regFixo *r = lerRegistroFixo(f, RRN);
+    imprimirRegistroFixo(r);
+    freeRegistroFixo(r);
+
+    fclose(f);
+}

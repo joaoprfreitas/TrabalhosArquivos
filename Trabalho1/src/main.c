@@ -15,6 +15,7 @@ int main() {
     char tipoArquivo[20];
     char nomeCSV[100];
     char nomeBin[100];
+    int RRN;
 
     scanf("%d ", &funcionalidade);
     scanf("%s ", tipoArquivo);
@@ -38,7 +39,10 @@ int main() {
             /* code */
             break;
         case 4:
-            /* code */
+            scanf("%s ", nomeBin);
+            scanf("%d\r\n", &RRN);
+            getRegistroFixo(nomeBin, tipoArquivo, RRN);
+            
             break;
     
         default:

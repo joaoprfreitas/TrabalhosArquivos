@@ -14,10 +14,6 @@
 
 int proxRRN = 0;
 
-void freeRegistroFixo(regFixo *r);
-void imprimirRegistroFixo(regFixo *r);
-regFixo *lerRegistroFixo(FILE *f, int RRN);
-
 void setDefaultCabecalhoFixo(FILE *f, regCabecalhoFixo r) {
     fwrite(&r.status, sizeof(char), 1, f);
     fwrite(&r.topo, sizeof(int), 1, f);
@@ -160,7 +156,7 @@ void changeStatusToSafe(FILE *f) {
     fwrite(&status, sizeof(char), 1, f);
 }
 
-int getNumeroRegistro(FILE *f) {
+int getNumeroRegistros(FILE *f) {
     int numTotalRRN;
     fseek(f, POS_CABECALHO_PROXIMO_RRN, SEEK_SET);
     fread(&numTotalRRN, sizeof(int), 1, f);
@@ -169,7 +165,7 @@ int getNumeroRegistro(FILE *f) {
 }
 
 int lerTodosRegistrosFixos(FILE *f) {
-    int numTotalRRN = getNumeroRegistro(f);
+    int numTotalRRN = getNumeroRegistros(f);
 
     if (numTotalRRN == 0) return -1;
 

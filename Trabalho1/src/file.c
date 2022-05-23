@@ -8,7 +8,6 @@
 
 void setDataRegistroFixo(FILE *file, char *csvFileName);
 void setDataRegistroVariavel(FILE *file, char *csvFileName);
-char getStatus(FILE *f);
 
 // TODO: QUANDO FOR FECHAR O ARQUIVO, SETAR NO STATUS NO ARQUIVO PARA '1'
 void setRegistroCabecalho(FILE *file, char *tipoArquivo) {

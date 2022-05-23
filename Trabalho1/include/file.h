@@ -18,6 +18,7 @@ void setRegistroCabecalho(FILE *fileName, char *tipoArquivo);
 void setFileData(FILE *file, char *tipoArquivo, char *csvFileName);
 FILE *openBinFile(char *fileName);
 int lerTodosRegistros(FILE *f, char *tipoArquivo);
+char getStatus(FILE *f);
 
 
 #endif // FILE_H
