@@ -8,5 +8,6 @@ IN PROGRESS: REFATORAÇÃO:
 
 TODO: Funcionalidade 3
       Verificar todas as mensagens de erro
+      Verificar vazamentos de memória
       Remover variáveis globais
       Verificar atende às especificações do projeto
