@@ -8,7 +8,6 @@
 #ifndef REGTAMANHOFIXO_H
 #define REGTAMANHOFIXO_H
 
-#include <string.h>
 #include <stdio.h>
 #include <utils.h>
 
@@ -63,18 +62,26 @@ typedef struct regTamanhoFixo {
     char codC7;
     char *modelo;
 
-    int tamLixo;
+    int tamLixo; // Auxilia no preenchimento do lixo no arquivo
 } regFixo;
 
+void setCabecalhoRegistroFixo(FILE *, regCabecalhoFixo);
 regCabecalhoFixo defaultCabecalhoFixo();
-void setDefaultCabecalhoFixo(FILE *, regCabecalhoFixo);
+
 void addRegistroFixo(FILE *f, regFixo *r);
 regFixo formatRegistroFixo(data_t *data);
+
+int getProxRRN(FILE *f);
+void setProxRRN(FILE *f, int proxRRN);
+void addProxRRN(FILE *f);
+
 void changeStatusToSafe(FILE *f);
+
 int getNumeroRegistros(FILE *f);
+
+regFixo *lerRegistroFixo(FILE *f, int RRN);
 int lerTodosRegistrosFixos(FILE *f);
 void imprimirRegistroFixo(regFixo *r);
-regFixo *lerRegistroFixo(FILE *f, int RRN);
 void freeRegistroFixo(regFixo *r);
 
 #endif // #REGTAMANHOFIXO_H

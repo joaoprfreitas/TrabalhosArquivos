@@ -13,7 +13,7 @@ void setDataRegistroVariavel(FILE *file, char *csvFileName);
 void setRegistroCabecalho(FILE *file, char *tipoArquivo) {
     // Seta tipo 1
     if (!(strcmp(tipoArquivo, "tipo1"))) {
-        setDefaultCabecalhoFixo(file, defaultCabecalhoFixo());
+        setCabecalhoRegistroFixo(file, defaultCabecalhoFixo());
         return;
     }
 
@@ -23,7 +23,7 @@ void setRegistroCabecalho(FILE *file, char *tipoArquivo) {
 }
 
 FILE *createFile(char *fileName) {
-    FILE *f = fopen(fileName, "wb");
+    FILE *f = fopen(fileName, "wb+");
     if (f == NULL) {
         printf("Falha no processamento do arquivo.\n");
         return NULL;
@@ -50,6 +50,7 @@ void setDataRegistroFixo(FILE *file, char *csvFileName) {
     char *header = lerString(csv, CSV_ENDLINE, NULL);
     free(header);
 
+    int proxRRN = 0;
     while (true) {
         data_t data;
         if (!readLineCSV(csv, &data)) {
@@ -59,6 +60,7 @@ void setDataRegistroFixo(FILE *file, char *csvFileName) {
         regFixo r = formatRegistroFixo(&data);
 
         addRegistroFixo(file, &r);
+        proxRRN++;
 
         free(r.cidade);
         free(r.marca);
@@ -68,6 +70,8 @@ void setDataRegistroFixo(FILE *file, char *csvFileName) {
         free(data.marca);
         free(data.modelo);
     }
+
+    setProxRRN(file, proxRRN);
 
     fclose(csv);
 }
