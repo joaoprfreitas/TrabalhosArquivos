@@ -13,8 +13,6 @@ void setDataRegistroVariavel(FILE *file, char *csvFileName);
 void setRegistroCabecalho(FILE *file, char *tipoArquivo) {
     // Seta tipo 1
     if (!(strcmp(tipoArquivo, "tipo1"))) {
-        regCabecalhoFixo aa = defaultCabecalhoFixo();
-        
         setDefaultCabecalhoFixo(file, defaultCabecalhoFixo());
         return;
     }
