@@ -5,9 +5,9 @@ DONE: Funcionalidade 1
 IN PROGRESS: REFATORAÇÃO:
               - FALTAM: file, funcionalidades, regTamanhoFixo, regTamanhoVariavel
               - FEITO: utils
+             Verificar todas as mensagens de erro
+             Verificar vazamentos de memória
+             Remover variáveis globais
 
 TODO: Funcionalidade 3
-      Verificar todas as mensagens de erro
-      Verificar vazamentos de memória
-      Remover variáveis globais
       Verificar atende às especificações do projeto
