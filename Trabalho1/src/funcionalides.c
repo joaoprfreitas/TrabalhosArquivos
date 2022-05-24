@@ -7,32 +7,52 @@
 
 #include <funcionalidades.h>
 
-void createTable(char *fileName, char *tipoArquivo, char *csvFileName) {
+/*
+ * Funcionalidade 1 do trabalho.
+ *
+ * Cria o arquivo de dados armazenando o cabeçalho e todos os
+ * os registros (de acordo com o tipo) do arquivo CSV.
+ */
+void createTable(char *nomeArquivo, char *tipoArquivo, char *nomeCSV) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) {
         printf("Falha no processamento do arquivo.\n");
         return;
     }
 
-    FILE *file = createFile(fileName);
+    FILE *file = criarArquivoBinario(nomeArquivo);
+
+    if (file == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
     setRegistroCabecalho(file, tipoArquivo);
 
-    setFileData(file, tipoArquivo, csvFileName);
+    preencherArquivoDados(file, tipoArquivo, nomeCSV);
 
-    changeStatusToSafe(file);
+    setStatusSeguro(file);
 
     fclose(file);
 }
 
-void listarTodosRegistros(char *binFileName, char *tipoArquivo) {
+/*
+ * Funcionalidade 2 do trabalho.
+ *
+ * Realiza a impressão de todos os registro os registros
+ * armazenados em um determinado arquivo.
+ */
+void listarTodosRegistros(char *nomeArquivo, char *tipoArquivo) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) {
         printf("Falha no processamento do arquivo.\n");
         return;
     }
 
-    FILE *f = openBinFile(binFileName);
+    FILE *f = abrirArquivoDados(nomeArquivo);
     
-    if (f == NULL) return;
+    if (f == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
     int codigo = lerTodosRegistros(f, tipoArquivo);
 
@@ -44,15 +64,24 @@ void listarTodosRegistros(char *binFileName, char *tipoArquivo) {
     fclose(f);
 }
 
-void getRegistroFixo(char *nomeArquivoBinario, char *tipoArquivo, int RRN) {
+/*
+ * Funcionalidade 4 do trabalho.
+ *
+ * Realiza a impressão de um determinado registro fixo do arquivo
+ * a partir de um dado RRN
+ */
+void getRegistroFixo(char *nomeArquivo, char *tipoArquivo, int RRN) {
     if (strcmp(tipoArquivo, "tipo1")) {
         printf("Falha no processamento do arquivo.\n");
         return;
     }
 
-    FILE *f = openBinFile(nomeArquivoBinario);
+    FILE *f = abrirArquivoDados(nomeArquivo);
 
-    if (f == NULL) return;
+    if (f == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
     if (getStatus(f) == '0' || RRN < 0) {
         printf("Falha no processamento do arquivo.\n");
@@ -65,7 +94,12 @@ void getRegistroFixo(char *nomeArquivoBinario, char *tipoArquivo, int RRN) {
     }
 
     regFixo *r = lerRegistroFixo(f, RRN);
-    imprimirRegistroFixo(r);
+
+    if (r->removido == '0')
+        imprimirRegistroFixo(r);
+    else
+        printf("Registro inexistente.\n");
+        
     freeRegistroFixo(r);
 
     fclose(f);

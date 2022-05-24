@@ -13,12 +13,15 @@
 #include <regTamanhoFixo.h>
 #include <regTamanhoVariavel.h>
 
-FILE *createFile(char *fileName);
+FILE *criarArquivoBinario(char *fileName);
 void setRegistroCabecalho(FILE *fileName, char *tipoArquivo);
-void setFileData(FILE *file, char *tipoArquivo, char *csvFileName);
-FILE *openBinFile(char *fileName);
+void preencherArquivoDados(FILE *file, char *tipoArquivo, char *csvFileName);
+FILE *abrirArquivoDados(char *fileName);
+
 int lerTodosRegistros(FILE *f, char *tipoArquivo);
+
 char getStatus(FILE *f);
+void setStatusSeguro(FILE *f);
 
 
 #endif // FILE_H

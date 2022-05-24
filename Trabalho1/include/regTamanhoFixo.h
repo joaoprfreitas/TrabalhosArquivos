@@ -75,8 +75,6 @@ int getProxRRN(FILE *f);
 void setProxRRN(FILE *f, int proxRRN);
 void addProxRRN(FILE *f);
 
-void changeStatusToSafe(FILE *f);
-
 int getNumeroRegistros(FILE *f);
 
 regFixo *lerRegistroFixo(FILE *f, int RRN);

@@ -6,41 +6,59 @@
  */
 #include <file.h>
 
-void setDataRegistroFixo(FILE *file, char *csvFileName);
-void setDataRegistroVariavel(FILE *file, char *csvFileName);
+void setDadosRegistroFixo(FILE *file, char *csvFileName);
+void setDadosRegistroVariavel(FILE *file, char *csvFileName);
 
-// TODO: QUANDO FOR FECHAR O ARQUIVO, SETAR NO STATUS NO ARQUIVO PARA '1'
+/*
+ * Cria um arquivo binário com o nome passado como parâmetro.
+ * Retorna um ponteiro para o arquivo criado ou NULL no caso de um problema na criação.
+ */
+FILE *criarArquivoBinario(char *fileName) {
+    FILE *f = fopen(fileName, "wb+");
+
+    if (f == NULL) return NULL;
+
+    return f;
+}
+
+/*
+ * Verifica o tipo do arquivo, chamando a função correta
+ * para setar o registro de cabeçalho desse tipo no arquivo binário.
+ */
 void setRegistroCabecalho(FILE *file, char *tipoArquivo) {
-    // Seta tipo 1
     if (!(strcmp(tipoArquivo, "tipo1"))) {
         setCabecalhoRegistroFixo(file, defaultCabecalhoFixo());
         return;
     }
 
-    // Seta tipo 2
     setCabecalhoRegistroVariavel(file, defaultCabecalhoVariavel());
-    
 }
 
-FILE *createFile(char *fileName) {
-    FILE *f = fopen(fileName, "wb+");
-    if (f == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-        return NULL;
-    }
-    return f;
-}
-
-void setFileData(FILE *file, char *tipoArquivo, char *csvFileName) {
+/*
+ * Verifica o tipo do arquivo, chamando a função correta
+ * para setar os dados dos registros desse tipo.
+ */
+void preencherArquivoDados(FILE *file, char *tipoArquivo, char *csvFileName) {
     if (!(strcmp(tipoArquivo, "tipo1"))) {
-        setDataRegistroFixo(file, csvFileName);
+        setDadosRegistroFixo(file, csvFileName);
         return;
     }
 
-    setDataRegistroVariavel(file, csvFileName);
+    setDadosRegistroVariavel(file, csvFileName);
 }
 
-void setDataRegistroFixo(FILE *file, char *csvFileName) {
+/*
+ * Abre um arquivo CSV com o nome passado como parâmetro.
+ * Faz a leitura do cabeçalho do CSV, indo direto para o conteúdo.
+ * 
+ * Enquanto não chegar ao fim do csv:
+ *  - Faz a leitura de uma linha do csv, salvando as infos na estrutura data_t.
+ *  - Realiza o parsing das infos de data_t para a estrutura do registro fixo.
+ *  - Escreve o registro fixo no arquivo binário.
+ * 
+ * Altera no cabeçalho do arquivo o campo proxRRN.
+ */
+void setDadosRegistroFixo(FILE *file, char *csvFileName) {
     FILE *csv = fopen(csvFileName, "r");
     if (csv == NULL) {
         printf("Falha no processamento do arquivo.\n");
@@ -50,7 +68,7 @@ void setDataRegistroFixo(FILE *file, char *csvFileName) {
     char *header = lerString(csv, CSV_ENDLINE, NULL);
     free(header);
 
-    int proxRRN = 0;
+    int proxRRN = 0; // Contador de RRNs armazenados
     while (true) {
         data_t data;
         if (!readLineCSV(csv, &data)) {
@@ -62,6 +80,7 @@ void setDataRegistroFixo(FILE *file, char *csvFileName) {
         addRegistroFixo(file, &r);
         proxRRN++;
 
+        // Libera a memória auxiliar utilizada 
         free(r.cidade);
         free(r.marca);
         free(r.modelo);
@@ -76,7 +95,18 @@ void setDataRegistroFixo(FILE *file, char *csvFileName) {
     fclose(csv);
 }
 
-void setDataRegistroVariavel(FILE *file, char *csvFileName) {
+/*
+ * Abre um arquivo CSV com o nome passado como parâmetro.
+ * Faz a leitura do cabeçalho do CSV, indo direto para o conteúdo.
+ * 
+ * Enquanto não chegar ao fim do csv:
+ *  - Faz a leitura de uma linha do csv, salvando as infos na estrutura data_t.
+ *  - Realiza o parsing das infos de data_t para a estrutura do registro de tamanho variável.
+ *  - Escreve o registro variável no arquivo binário.
+ * 
+ * Altera no cabeçalho do arquivo o campo proxByteOffset.
+ */
+void setDadosRegistroVariavel(FILE *file, char *csvFileName) {
     FILE *csv = fopen(csvFileName, "r");
     if (csv == NULL) {
         printf("Falha no processamento do arquivo.\n");
@@ -96,6 +126,7 @@ void setDataRegistroVariavel(FILE *file, char *csvFileName) {
 
         addRegistroVariavel(file, &r);
 
+        // Libera a memória auxiliar utilizada
         free(r.cidade);
         free(r.marca);
         free(r.modelo);
@@ -110,15 +141,30 @@ void setDataRegistroVariavel(FILE *file, char *csvFileName) {
     fclose(csv);
 }
 
-FILE *openBinFile(char *fileName) {
+/*
+ * Abre um arquivo binário com o nome passado como parâmetro.
+ * Retorna um ponteiro para o arquivo criado ou NULL no caso de um problema na abertura.
+ */
+FILE *abrirArquivoDados(char *fileName) {
     FILE *f = fopen(fileName, "rb");
-    if (f == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-        return NULL;
-    }
+
+    if (f == NULL) return NULL;
+
     return f;
 }
 
+/*
+ * Faz a alteração do status no registro de cabeçalho do arquivo de dados.
+ */
+void setStatusSeguro(FILE *f) {
+    fseek(f, 0, SEEK_SET);
+    char status = '1';
+    fwrite(&status, sizeof(char), 1, f);
+}
+
+/*
+ * Retorna o status do arquivo de dados.
+ */
 char getStatus(FILE *f) {
     fseek(f, 0, SEEK_SET);
     char status;
@@ -126,6 +172,14 @@ char getStatus(FILE *f) {
     return status;
 }
 
+/*
+ * Verifica se o arquivo está consistente.
+ * Chama uma determinada função para cada tipo de registro.
+ * Retorna:
+ * - 0 se a leitura tiver ocorrido.
+ * - -1 se não houver registros.
+ * - -2 se o arquivo estiver inconsistente.
+ */
 int lerTodosRegistros(FILE *f, char *tipoArquivo) {
     if (getStatus(f) == '0') return -2; // Arquivo inconsistente
 

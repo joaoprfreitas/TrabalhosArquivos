@@ -201,16 +201,6 @@ regFixo formatRegistroFixo(data_t *data) {
     return r;
 }
 
-
-/*
- * Faz a alteração do status no registro de cabeçalho do arquivo de dados.
- */
-void changeStatusToSafe(FILE *f) {
-    fseek(f, 0, SEEK_SET);
-    char status = '1';
-    fwrite(&status, sizeof(char), 1, f);
-}
-
 /*
  * Retorna o número de registros no arquivo de dados.
  */
