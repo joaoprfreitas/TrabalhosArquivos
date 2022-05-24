@@ -3,8 +3,8 @@ DONE: Funcionalidade 1
       Funcionalidade 4
 
 IN PROGRESS: REFATORAÇÃO:
-              - FALTAM: file, funcionalidades, regTamanhoVariavel
-              - FEITO: utils, regTamanhoFixo
+              - FALTAM: file, funcionalidades
+              - FEITO: utils, regTamanhoFixo, regTamanhoVariavel
              Verificar todas as mensagens de erro
              Verificar vazamentos de memória
 

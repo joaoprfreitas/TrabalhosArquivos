@@ -67,7 +67,7 @@ typedef struct regTamanhoVariavel {
 } regVariavel;
 
 regCabecalhoVariavel defaultCabecalhoVariavel();
-void setDefaultCabecalhoVariavel(FILE *, regCabecalhoVariavel);
+void setCabecalhoRegistroVariavel(FILE *, regCabecalhoVariavel);
 
 void addRegistroVariavel(FILE *f, regVariavel *r);
 regVariavel formatRegistroVariavel(data_t *data);

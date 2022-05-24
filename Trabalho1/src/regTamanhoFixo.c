@@ -16,7 +16,8 @@
 
 /*
  * Escreve  as informações do cabeçalho de um arquivo de dados
- * com registros de tamanho fixo.
+ * com registros de tamanho fixo a partir da estrutura de um
+ * registro.
  */
 void setCabecalhoRegistroFixo(FILE *f, regCabecalhoFixo r) {
     fwrite(&r.status, sizeof(char), 1, f);
@@ -103,9 +104,9 @@ void addProxRRN(FILE *f) {
 
 /*
  * Adiciona um registro de tamanho fixo no fim do arquivo de dados.
- * Para isto, é passada a estrutura do registro devidamente preenchido.
+ * Para isto, é passada a estrutura do registro devidamente preenchida.
  * Ainda, a função faz as verificações a respeito da cidade, marca e modelo,
- * inserindo no arquivo as informações (caso existam, o tamanho é != -1)
+ * inserindo no arquivo essas informações caso existam.
  * Por fim, preenche o restante do espaço do registro com lixo ('$').
  */
 void addRegistroFixo(FILE *f, regFixo *r) {
@@ -170,7 +171,7 @@ regFixo formatRegistroFixo(data_t *data) {
 
     r.codC5 = '0';
     r.cidade = strdup(data->cidade);
-    if (strcmp(data->cidade, "")) {
+    if (strcmp(data->cidade, "")) {  // Se não for vazio
         r.tamCidade = strlen(data->cidade);
         tamanhoCamposVariaveis += sizeof(int) + sizeof(char) + r.tamCidade;
     } else {
@@ -179,7 +180,7 @@ regFixo formatRegistroFixo(data_t *data) {
 
     r.codC6 = '1';
     r.marca = strdup(data->marca);
-    if (strcmp(data->marca, "")) {
+    if (strcmp(data->marca, "")) {  // Se não for vazio
         r.tamMarca = strlen(data->marca);
         tamanhoCamposVariaveis += sizeof(int) + sizeof(char) + r.tamMarca;
     } else {
@@ -188,7 +189,7 @@ regFixo formatRegistroFixo(data_t *data) {
 
     r.codC7 = '2';
     r.modelo = strdup(data->modelo);
-    if (strcmp(data->modelo, "")) {
+    if (strcmp(data->modelo, "")) {  // Se não for vazio
         r.tamModelo = strlen(data->modelo);
         tamanhoCamposVariaveis += sizeof(int) + sizeof(char) + r.tamModelo;
     } else {

@@ -18,7 +18,7 @@ void setRegistroCabecalho(FILE *file, char *tipoArquivo) {
     }
 
     // Seta tipo 2
-    setDefaultCabecalhoVariavel(file, defaultCabecalhoVariavel());
+    setCabecalhoRegistroVariavel(file, defaultCabecalhoVariavel());
     
 }
 
