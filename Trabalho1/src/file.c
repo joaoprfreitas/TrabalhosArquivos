@@ -105,6 +105,8 @@ void setDataRegistroVariavel(FILE *file, char *csvFileName) {
         free(data.modelo);
     }
 
+    setProxByteOffset(file, ftell(file));
+
     fclose(csv);
 }
 

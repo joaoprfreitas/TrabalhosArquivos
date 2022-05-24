@@ -73,4 +73,7 @@ void addRegistroVariavel(FILE *f, regVariavel *r);
 regVariavel formatRegistroVariavel(data_t *data);
 int lerTodosRegistrosVariaveis(FILE *f);
 
+long long int getProxByteOffset(FILE *f);
+void setProxByteOffset(FILE *f, long long int proxByteOffset);
+
 #endif // #REGTAMANHOFIXO_H

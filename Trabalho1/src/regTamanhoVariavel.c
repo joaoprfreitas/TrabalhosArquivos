@@ -11,8 +11,6 @@
 #define POS_CABECALHO_PROXIMO_BYTE_OFFSET 178
 #define TAM_CABECALHO_VARIAVEL 190
 
-long long int proxByteOffSet = 0;
-
 regVariavel *lerRegistroVariavel(FILE *f);
 void imprimirRegistroVariavel(regVariavel *r);
 void freeRegistroVariavel(regVariavel *r);
@@ -64,6 +62,19 @@ regCabecalhoVariavel defaultCabecalhoVariavel() {
     return r;
 }
 
+long long int getProxByteOffset(FILE *f) {
+    long long int proxByteOffset;
+    fseek(f, POS_CABECALHO_PROXIMO_BYTE_OFFSET, SEEK_SET);
+    fread(&proxByteOffset, sizeof(long long int), 1, f);
+
+    return proxByteOffset;
+}
+
+void setProxByteOffset(FILE *f, long long int proxByteOffset) {
+    fseek(f, POS_CABECALHO_PROXIMO_BYTE_OFFSET, SEEK_SET);
+    fwrite(&proxByteOffset, sizeof(long long int), 1, f);
+}
+
 void addRegistroVariavel(FILE *f, regVariavel *r) {
     fwrite(&r->removido, sizeof(char), 1, f);
 
@@ -94,11 +105,7 @@ void addRegistroVariavel(FILE *f, regVariavel *r) {
         fwrite(r->modelo, sizeof(char), r->tamModelo, f);
     }
 
-    proxByteOffSet = ftell(f);
-
-    fseek(f, POS_CABECALHO_PROXIMO_BYTE_OFFSET, SEEK_SET);
-    fwrite(&proxByteOffSet, sizeof(long long int), 1, f);
-    fseek(f, proxByteOffSet, SEEK_SET);
+    fseek(f, 0, SEEK_END);
 }
 
 regVariavel formatRegistroVariavel(data_t *data) {
@@ -147,15 +154,6 @@ regVariavel formatRegistroVariavel(data_t *data) {
     r.tamanhoRegistro = contadorAux + TAM_CAMPO_FIXO;
 
     return r;
-}
-
-long long int getProxByteOffset(FILE *f) {
-    long long int proxByteOffset;
-
-    fseek(f, POS_CABECALHO_PROXIMO_BYTE_OFFSET, SEEK_SET);
-    fread(&proxByteOffset, sizeof(long long int), 1, f);
-
-    return proxByteOffset;
 }
 
 int lerTodosRegistrosVariaveis(FILE *f) {

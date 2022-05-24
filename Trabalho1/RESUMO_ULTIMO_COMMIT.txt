@@ -7,7 +7,6 @@ IN PROGRESS: REFATORAÇÃO:
               - FEITO: utils, regTamanhoFixo
              Verificar todas as mensagens de erro
              Verificar vazamentos de memória
-             Remover variáveis globais
 
 TODO: Funcionalidade 3
       Verificar atende às especificações do projeto
