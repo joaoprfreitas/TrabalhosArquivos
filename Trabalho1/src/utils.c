@@ -71,7 +71,7 @@ bool readLineCSV(FILE *csv, data_t *data) {
     /* strsep é para extrair os tokens de uma string separada por delimitadores
      * mesmo que algum field esteja vazio, o delimitador será considerado
      */
-    while ((token = strsep(&buffer, CSV_DELIMITER)) != NULL) {
+    while ((token = strsep(&buffer, CSV_DELIMITER)) != NULL) { // Enquanto houver tokens
         switch (i) {
             case 0:
                 data->id = atoi(token);
@@ -98,7 +98,7 @@ bool readLineCSV(FILE *csv, data_t *data) {
                 break;
 
             case 4:
-                if (!(strcmp(token, ""))) {
+                if (!(strcmp(token, ""))) { // Altera para lixo caso esteja vazio
                     data->sigla[0] = '$';
                     data->sigla[1] = '$';
                 } else    
@@ -130,10 +130,8 @@ bool readLineCSV(FILE *csv, data_t *data) {
 campos* capturaCampos(int n){
     campos* n_campos = malloc(n * sizeof(campos));
     
-    // Faz a leitura dos n campos, alocando dinamicamente
-    for (int i = 0; i < n; i++){
-        // n_campos[i].str1 = malloc(100 * sizeof(char));
-        // n_campos[i].str2 = malloc(100 * sizeof(char));
+    // Faz a leitura dos n campos
+    for (int i = 0; i < n; i++) {
         scanf("%s ", n_campos[i].str1);
         scan_quote_string(n_campos[i].str2);
     }    

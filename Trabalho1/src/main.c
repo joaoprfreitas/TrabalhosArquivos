@@ -18,9 +18,10 @@ int main() {
     char nomeCSV[100];
     char nomeArquivoBinario[100];
 
-    int RRN, n;
+    int RRN; // Valor do RRN a ser buscado
+    int n; // Numero de campos
 
-    campos* n_campos;
+    campos* n_campos; // Vetor dos campos a serem buscados
 
     scanf("%d ", &funcionalidade);
     scanf("%s ", tipoArquivo);

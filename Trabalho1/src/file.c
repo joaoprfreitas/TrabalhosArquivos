@@ -118,7 +118,7 @@ void setDadosRegistroVariavel(FILE *file, char *csvFileName) {
 
     while (true) {
         data_t data;
-        if (!readLineCSV(csv, &data)) {
+        if (!readLineCSV(csv, &data)) { // Chegou no fim do arquivo
             break;
         }
 
@@ -136,7 +136,7 @@ void setDadosRegistroVariavel(FILE *file, char *csvFileName) {
         free(data.modelo);
     }
 
-    setProxByteOffset(file, ftell(file));
+    setProxByteOffset(file, ftell(file)); // Atualiza o cabeçalho
 
     fclose(csv);
 }

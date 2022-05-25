@@ -375,11 +375,13 @@ void freeRegistroFixo(regFixo *r) {
 }
 
 /*
-    Retorna:
-    -1: Caso algum erro seja encontrado ou nenhum campo corresponda com o procurado
-     0: Campo encontrado
-
-*/
+ * Faz a comparação dos campos do registro fixo com os dados de busca.
+ * Se o campo existir no registro e for igual ao dado de busca, conta como match
+ * Se o número de campos buscados for igual ao número de matches,
+ * então o registro é considerado como match.
+ * 
+ * Retorna 0 se o registro for match e -1 caso contrário.
+ */
 int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos){
     if(r == NULL || r->removido == '1')
         return -1;
@@ -404,7 +406,3 @@ int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos){
 
     return -1;
 }
-
-
-
-

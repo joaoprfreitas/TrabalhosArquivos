@@ -122,7 +122,7 @@ void getRegistroFixo(char *nomeArquivo, char *tipoArquivo, int RRN) {
 
     regFixo *r = lerRegistroFixo(f, RRN);
 
-    if (r->removido == '0')
+    if (r->removido == '0') // Se o registro não estiver marcado como removido
         imprimirRegistroFixo(r);
     else
         printf("Registro inexistente.\n");
