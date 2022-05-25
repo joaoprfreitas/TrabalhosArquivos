@@ -8,21 +8,13 @@
 #ifndef FUNCIONALIDADES
 #define FUNCIONALIDADES
 
-typedef struct campos{
-    char *str1;
-    char *str2;
-
-}campos;
-
-
-
 #include <stdio.h>
 #include <file.h>
+#include <utils.h>
 
 void createTable(char *fileName, char *tipoArquivo, char *csvFileName);
 void listarTodosRegistros(char *binFileName, char *tipoArquivo);
 void getRegistroFixo(char *nomeArquivoBinario, char *tipoArquivo, int RRN);
-campos* capturaCampos(int n);
-void liberaCampos(campos*, int n);
-int listarCamposPesquisados(char* nomeArquivoBinario, campos*, int numCampos, char* tipoArquivo);
+void listarCamposPesquisados(char* nomeArquivoBinario, campos*, int numCampos, char* tipoArquivo);
+
 #endif // FUNCIONALIDADES

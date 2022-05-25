@@ -189,3 +189,59 @@ int lerTodosRegistros(FILE *f, char *tipoArquivo) {
 
     return lerTodosRegistrosVariaveis(f);
 }
+
+/*
+ * Realiza uma busca sequencial no arquivo de dados por registros que contenham determinados campos.
+ * Realiza a impressão desses registros caso existam, ou imprime uma mensagem de erro caso não existam.
+ */
+void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int numCampos) {
+    bool achou = false;
+    if (!strcmp("tipo1", tipoArquivo)) { // Registros de tamanho fixo
+        int total_rrn = getNumeroRegistros(f);
+
+        if (total_rrn == 0) { // Nenhum registro no arquivo
+            printf("Registro inexistente.\n");
+            return;
+        }
+        
+        for (int i = 0; i < total_rrn; i++) { // Percorre todos os RRNs do arquivo de dados
+            regFixo *r = lerRegistroFixo(f, i);
+
+            if (verificaCamposFixos(r, n_campos, numCampos) == 0) { // Se der match
+                imprimirRegistroFixo(r);
+                achou = true;
+            }
+
+            freeRegistroFixo(r);
+        }
+
+        if (!achou) printf("Registro inexistente.\n");
+
+        return;
+    }
+
+    // Registros de tamanho variável
+    int proxByteOffSet = getProxByteOffset(f);
+
+    if (proxByteOffSet == 0) {
+        printf("Registro inexistente.\n");
+        return;
+    }
+    
+    regVariavel *r;
+
+    fseek(f, TAM_CABECALHO_VARIAVEL, SEEK_SET); // Posiciona o ponteiro para o primeiro registro
+
+    do { // Percorre todos os registros do arquivo de dados
+        r = lerRegistroVariavel(f);
+
+        if (verificaCamposVariaveis(r, n_campos, numCampos) == 0) { // Se der match
+            imprimirRegistroVariavel(r); 
+            achou = true;
+        }
+
+        freeRegistroVariavel(r);
+    } while (proxByteOffSet != ftell(f));
+                 
+    if(!achou) printf("Registro inexistente\n");
+}

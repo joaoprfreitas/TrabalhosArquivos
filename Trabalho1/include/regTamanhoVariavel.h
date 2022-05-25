@@ -13,6 +13,8 @@
 #include <string.h>
 #include <utils.h>
 
+#define TAM_CABECALHO_VARIAVEL 190
+
 #define TAM_DESCRICAO 40
 #define TAM_DESC1 22
 #define TAM_DESC2 19

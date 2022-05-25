@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <utils.h>
 #include <funcionalidades.h>
 #include <funcoesFornecidas.h>
 
@@ -43,13 +44,11 @@ int main() {
         case 3:
             scanf("%s\r\n", nomeArquivoBinario);
             scanf("%d", &n);
+
             n_campos = capturaCampos(n);
-                
-            
             listarCamposPesquisados(nomeArquivoBinario, n_campos, n, tipoArquivo);
-             
-            liberaCampos(n_campos, n);
-            n_campos++;
+            
+            free(n_campos);
             break;
             
         case 4:

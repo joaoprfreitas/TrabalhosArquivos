@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <funcoesFornecidas.h>
 
 #define CSV_ENDLINE '\n'
 
@@ -26,7 +27,14 @@ typedef struct data_st {
     char *modelo;
 } data_t;
 
+typedef struct campos{
+    char str1[100];
+    char str2[100];
+} campos;
+
 char *lerString(FILE *f, char parada, bool *fimArquivo);
 bool readLineCSV(FILE *csvFileName, data_t *data);
+
+campos* capturaCampos(int n);
 
 #endif // UTILS_H

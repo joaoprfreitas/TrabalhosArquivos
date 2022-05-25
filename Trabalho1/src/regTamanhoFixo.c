@@ -373,6 +373,7 @@ void freeRegistroFixo(regFixo *r) {
     }
     free(r);
 }
+
 /*
     Retorna:
     -1: Caso algum erro seja encontrado ou nenhum campo corresponda com o procurado
@@ -380,15 +381,12 @@ void freeRegistroFixo(regFixo *r) {
 
 */
 int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos){
-    if(r == NULL)
+    if(r == NULL || r->removido == '1')
         return -1;
 
-    
-    if(r->removido == '1')
-        return -1; 
-
     int contadorDeMatchs = 0;
-        for(int i = 0; i < totalCampos; i++){
+
+        for (int i = 0; i < totalCampos; i++){
             if (r->tamMarca != -1 && (!strcmp(n_campos[i].str2, r->marca)))
                 contadorDeMatchs++;
             if (r->tamModelo != -1 && (!strcmp(n_campos[i].str2, r->modelo)))

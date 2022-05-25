@@ -9,7 +9,6 @@
 
 #define TAM_CAMPO_FIXO 22 // Conta a partir do 5o byte
 #define POS_CABECALHO_PROXIMO_BYTE_OFFSET 178
-#define TAM_CABECALHO_VARIAVEL 190
 
 regVariavel *lerRegistroVariavel(FILE *f);
 void imprimirRegistroVariavel(regVariavel *r);

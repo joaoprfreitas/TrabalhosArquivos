@@ -23,5 +23,6 @@ int lerTodosRegistros(FILE *f, char *tipoArquivo);
 char getStatus(FILE *f);
 void setStatusSeguro(FILE *f);
 
+void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int numCampos);
 
 #endif // FILE_H

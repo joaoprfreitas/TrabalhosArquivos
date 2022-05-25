@@ -121,3 +121,22 @@ bool readLineCSV(FILE *csv, data_t *data) {
 
     return true;
 }
+
+/*
+ *  Faz a leitura dos campos a serem pesquisados.
+ *  Retorna o vetor de campos a serem pesquisados. 
+*/
+
+campos* capturaCampos(int n){
+    campos* n_campos = malloc(n * sizeof(campos));
+    
+    // Faz a leitura dos n campos, alocando dinamicamente
+    for (int i = 0; i < n; i++){
+        // n_campos[i].str1 = malloc(100 * sizeof(char));
+        // n_campos[i].str2 = malloc(100 * sizeof(char));
+        scanf("%s ", n_campos[i].str1);
+        scan_quote_string(n_campos[i].str2);
+    }    
+
+    return n_campos;
+}
