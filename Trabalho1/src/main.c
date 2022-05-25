@@ -17,7 +17,9 @@ int main() {
     char nomeCSV[100];
     char nomeArquivoBinario[100];
 
-    int RRN;
+    int RRN, n;
+
+    campos* n_campos;
 
     scanf("%d ", &funcionalidade);
     scanf("%s ", tipoArquivo);
@@ -39,7 +41,15 @@ int main() {
             break;
 
         case 3:
-            /* code */
+            scanf("%s\r\n", nomeArquivoBinario);
+            scanf("%d", &n);
+            n_campos = capturaCampos(n);
+                
+            
+            listarCamposPesquisados(nomeArquivoBinario, n_campos, n, tipoArquivo);
+             
+            liberaCampos(n_campos, n);
+            n_campos++;
             break;
             
         case 4:

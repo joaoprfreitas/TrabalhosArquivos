@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <utils.h>
+#include <funcionalidades.h>
 
 #define TAM_DESCRICAO 40
 #define TAM_DESC1 22
@@ -81,5 +82,5 @@ regFixo *lerRegistroFixo(FILE *f, int RRN);
 int lerTodosRegistrosFixos(FILE *f);
 void imprimirRegistroFixo(regFixo *r);
 void freeRegistroFixo(regFixo *r);
-
+int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos);
 #endif // #REGTAMANHOFIXO_H

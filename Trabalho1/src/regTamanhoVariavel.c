@@ -344,3 +344,34 @@ void freeRegistroVariavel(regVariavel *r) {
     }
     free(r);
 }
+
+/*
+ Retorna:
+    -1: Caso algum erro seja encontrado ou nenhum campo corresponda com o procurado
+     0: Campo encontrado
+*/
+
+int verificaCamposVariaveis(regVariavel* r, campos* n_campos, int totalCampos){
+
+    if (r->removido == '1') return -1;
+    
+    int contadorDeMatchs = 0;
+    for(int i = 0; i < totalCampos; i++){
+        if (r->tamMarca != -1 && (!strcmp(n_campos[i].str2, r->marca)))
+            contadorDeMatchs++;
+        if (r->tamModelo != -1 && (!strcmp(n_campos[i].str2, r->modelo)))
+            contadorDeMatchs++;        
+        if (r->ano != -1 && (atoi(n_campos[i].str2) == r->ano))
+            contadorDeMatchs++;        
+        if (r->tamCidade != -1 && (!strcmp(n_campos[i].str2, r->cidade)))
+            contadorDeMatchs++;        
+        if (r->qtt != -1 && (atoi(n_campos[i].str2) == r->qtt))
+            contadorDeMatchs++;        
+    }
+
+    if(contadorDeMatchs == totalCampos)
+        return 0; 
+    return -1;
+}
+
+

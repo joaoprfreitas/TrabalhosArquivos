@@ -9,6 +9,7 @@
 #define REGTAMANHOVARIAVEL_H
 
 #include <stdio.h>
+#include <funcionalidades.h>
 #include <string.h>
 #include <utils.h>
 
@@ -75,5 +76,11 @@ int lerTodosRegistrosVariaveis(FILE *f);
 
 long long int getProxByteOffset(FILE *f);
 void setProxByteOffset(FILE *f, long long int proxByteOffset);
+
+int verificaCamposVariaveis(regVariavel*, campos*, int totalCampos);
+
+regVariavel *lerRegistroVariavel(FILE *f);
+void imprimirRegistroVariavel(regVariavel *r);
+void freeRegistroVariavel(regVariavel *r);
 
 #endif // #REGTAMANHOFIXO_H
