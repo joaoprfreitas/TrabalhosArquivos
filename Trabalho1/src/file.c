@@ -196,7 +196,7 @@ int lerTodosRegistros(FILE *f, char *tipoArquivo) {
  */
 void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int numCampos) {
     bool achou = false;
-    if (getStatus(f) == '0'){
+    if (getStatus(f) == '0'){   //Verifica a consistencia do arquivo
         printf("Falha no processamento do arquivo.\n");
         return;
     }
