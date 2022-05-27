@@ -196,6 +196,10 @@ int lerTodosRegistros(FILE *f, char *tipoArquivo) {
  */
 void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int numCampos) {
     bool achou = false;
+    if (getStatus(f) == '0'){
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
     if (!strcmp("tipo1", tipoArquivo)) { // Registros de tamanho fixo
         int total_rrn = getNumeroRegistros(f);
 
