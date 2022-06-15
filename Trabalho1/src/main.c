@@ -32,8 +32,6 @@ int main() {
             scanf("%s\r\n", nomeArquivoBinario);
 
             createTable(nomeArquivoBinario, tipoArquivo, nomeCSV);
-
-            binarioNaTela(nomeArquivoBinario);
             break;
 
         case 2:

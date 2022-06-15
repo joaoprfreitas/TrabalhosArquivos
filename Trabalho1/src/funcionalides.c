@@ -7,6 +7,7 @@
 
 #include <funcionalidades.h>
 #include <funcoesFornecidas.h>
+#include <funcoesFornecidas.h>
 
 /*
  * Funcionalidade 1 do trabalho.
@@ -34,6 +35,8 @@ void createTable(char *nomeArquivo, char *tipoArquivo, char *nomeCSV) {
     setStatusSeguro(file);
 
     fclose(file);
+
+    binarioNaTela(nomeArquivo);
 }
 
 /*

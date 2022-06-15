@@ -247,5 +247,5 @@ void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int n
         freeRegistroVariavel(r);
     } while (proxByteOffSet != ftell(f));
                  
-    if(!achou) printf("Registro inexistente\n");
+    if(!achou) printf("Registro inexistente.\n");
 }
