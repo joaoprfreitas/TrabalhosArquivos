@@ -1,6 +1,5 @@
 /*
  * SSC0215 - 2022 - Organização de arquivos
- * Trabalho 1
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
@@ -21,8 +20,11 @@ FILE *abrirArquivoDados(char *fileName);
 int lerTodosRegistros(FILE *f, char *tipoArquivo);
 
 char getStatus(FILE *f);
-void setStatusSeguro(FILE *f);
+void setStatusConsistente(FILE *f);
+void setStatusInconsistente(FILE *f);
 
 void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int numCampos);
+
+void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index);
 
 #endif // FILE_H

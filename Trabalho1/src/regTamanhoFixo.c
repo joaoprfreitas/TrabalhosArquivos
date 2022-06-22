@@ -1,6 +1,5 @@
 /*
  * SSC0215 - 2022 - Organização de arquivos
- * Trabalho 1
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
@@ -272,7 +271,6 @@ regFixo *lerRegistroFixo(FILE *f, int RRN) {
         if (strcmp(testeExistencia, "$$$$") == 0) { // Se não existir nada
             break;
         }
-
         
         fseek(f, -4, SEEK_CUR);
 
@@ -405,4 +403,21 @@ int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos){
           return 0; 
 
     return -1;
+}
+
+void realizarIndexacaoRegFixo(FILE *dados, FILE *index) {
+    int numTotalRRN = getNumeroRegistros(dados);
+
+    if (numTotalRRN == 0) return;
+
+    for (int i = 0; i <= numTotalRRN; i++) {
+        regFixo *r = lerRegistroFixo(dados, i);
+        
+        if (r->removido == '0') {
+            fwrite(&r->id, sizeof(int), 1, index); // ID
+            fwrite(&i, sizeof(int), 1, index); // RRN
+        }
+
+        freeRegistroFixo(r);
+    }
 }

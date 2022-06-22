@@ -1,6 +1,5 @@
 /*
  * SSC0215 - 2022 - Organização de arquivos
- * Trabalho 1
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
@@ -154,11 +153,20 @@ FILE *abrirArquivoDados(char *fileName) {
 }
 
 /*
- * Faz a alteração do status no registro de cabeçalho do arquivo de dados.
+ * Faz a alteração do status no registro de cabeçalho para consistente
  */
-void setStatusSeguro(FILE *f) {
+void setStatusConsistente(FILE *f) {
     fseek(f, 0, SEEK_SET);
     char status = '1';
+    fwrite(&status, sizeof(char), 1, f);
+}
+
+/*
+ * Faz a alteração do status no registro de cabeçalho para inconsistente
+ */
+void setStatusInconsistente(FILE *f) {
+    fseek(f, 0, SEEK_SET);
+    char status = '0';
     fwrite(&status, sizeof(char), 1, f);
 }
 
@@ -249,3 +257,16 @@ void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int n
                  
     if(!achou) printf("Registro inexistente.\n");
 }
+
+void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
+    setStatusInconsistente(index);
+
+    if (!strcmp(tipoArquivo, "tipo1")) {
+        realizarIndexacaoRegFixo(dados, index);
+        return;
+    }
+    
+    realizarIndexacaoRegVariavel(dados, index);
+}
+
+

@@ -1,6 +1,5 @@
 /*
  * SSC0215 - 2022 - Organização de arquivos
- * Trabalho 1
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
@@ -374,4 +373,26 @@ int verificaCamposVariaveis(regVariavel* r, campos* n_campos, int totalCampos){
         return 0; 
 
     return -1;
+}
+
+void realizarIndexacaoRegVariavel(FILE *dados, FILE *index) {
+    int proxByteOffSet = getProxByteOffset(dados);
+    if (proxByteOffSet == 0) return;
+
+    fseek(dados, TAM_CABECALHO_VARIAVEL, SEEK_SET); // Posiciona o ponteiro para o primeiro registro'
+
+    long long int byteOffSetAtual = TAM_CABECALHO_VARIAVEL;
+
+    do {
+        regVariavel *r = lerRegistroVariavel(dados);
+
+        if (r->removido == '0') {
+            fwrite(&r->id, sizeof(int), 1, index); // ID
+            fwrite(&byteOffSetAtual, sizeof(long long int), 1, index); // RRN
+        }
+
+        freeRegistroVariavel(r);
+
+        byteOffSetAtual = ftell(dados);
+    } while(proxByteOffSet != byteOffSetAtual);
 }

@@ -1,6 +1,5 @@
 /*
  * SSC0215 - 2022 - Organização de arquivos
- * Trabalho 1
  * Nome: João Pedro Rodrigues Freitas, N USP: 11316552
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
@@ -32,7 +31,7 @@ void createTable(char *nomeArquivo, char *tipoArquivo, char *nomeCSV) {
 
     preencherArquivoDados(file, tipoArquivo, nomeCSV);
 
-    setStatusSeguro(file);
+    setStatusConsistente(file);
 
     fclose(file);
 
@@ -133,4 +132,34 @@ void getRegistroFixo(char *nomeArquivo, char *tipoArquivo, int RRN) {
     freeRegistroFixo(r);
 
     fclose(f);
+}
+
+void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice) {
+    if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    FILE *dados = abrirArquivoDados(arquivoDados);
+    FILE *index = criarArquivoBinario(arquivoIndice);
+
+    if (dados == NULL || index == NULL) {  // Problema ao abrir o arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    if (getStatus(dados) == '0') { // Arquivo inconsistente
+        printf("Falha no processamento do arquivo.\n");
+        fclose(dados);
+        return;
+    }
+
+    realizarIndexacao(tipoArquivo, dados, index);
+
+    setStatusConsistente(index);
+
+    fclose(dados);
+    fclose(index);
+
+    binarioNaTela(arquivoIndice);
 }
