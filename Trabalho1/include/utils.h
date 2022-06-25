@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <funcoesFornecidas.h>
+#include <constantes.h>
 
 #define CSV_ENDLINE '\n'
 
@@ -35,5 +36,6 @@ char *lerString(FILE *f, char parada, bool *fimArquivo);
 bool readLineCSV(FILE *csvFileName, data_t *data);
 
 campos* capturaCampos(int n);
+int buscaBinariaIndex(int id, index_t *index);
 
 #endif // UTILS_H

@@ -255,7 +255,7 @@ void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int n
         freeRegistroVariavel(r);
     } while (proxByteOffSet != ftell(f));
                  
-    if(!achou) printf("Registro inexistente.\n");
+    if (!achou) printf("Registro inexistente.\n");
 }
 
 void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
@@ -269,4 +269,47 @@ void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
     realizarIndexacaoRegVariavel(dados, index);
 }
 
+// TODO: desalocar o index
+// TODO: mudar o realloc
+// TODO: tem q ordenar?
+index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoDados, FILE *arquivoIndex) {
+    index_t index;
 
+    // fseek(index, 1, SEEK_SET); // Posiciona o ponteiro para o primeiro index
+    index.tamanho = 0;
+    index.lista = NULL;
+
+    int tamanhoPosicao = (!strcmp(tipoArquivo, "tipo1")) ? sizeof(int) : sizeof(long long int);
+    int idAuxiliar;
+    while (fread(&idAuxiliar, sizeof(int), 1, arquivoIndex) != 0) {
+        index.lista = realloc(index.lista, (index.tamanho + 1) * sizeof(index_t));
+
+        index.lista[index.tamanho].id = idAuxiliar;
+        fread(&index.lista[index.tamanho].posicao, tamanhoPosicao, 1, arquivoIndex);
+
+        index.tamanho++;
+    }
+
+    return index;
+}
+
+
+int campoRemocao(campos campo) {
+    if (!strcmp(campo.str1, "id")) return 0; // busca no index
+
+    return 1; // busca no arquivo
+}
+
+void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, FILE *arquivoIndex, campos *n_campos, int numCampos) {
+    index_t index = lerArquivoIndex(tipoArquivo, arquivoDados, arquivoIndex);
+
+    if (!strcmp(tipoArquivo, "tipo1")) {
+        for (int i = 0; i < numCampos; i++) {
+            removerRegistroFixo(arquivoDados, arquivoIndex, n_campos[i], campoRemocao(n_campos[i]));
+            // atualizar index
+        }
+        return;
+    }
+    
+    realizarRemocaoRegVariavel(arquivoDados, arquivoIndex, n_campos, numCampos);
+}

@@ -58,14 +58,38 @@ int main() {
 
         case 5:
             scanf("%s ", parametro1); // nome do arquivo de dados
-            scanf("%s\r\n", parametro2);  // nome arquivo binario
+            scanf("%s\r\n", parametro2);  // nome arquivo de indice
 
             criarIndex(tipoArquivo, parametro1, parametro2);
 
             break;
 
         case 6:
+            scanf("%s ", parametro1); // nome do arquivo de dados
+            scanf("%s ", parametro2);  // nome arquivo de indice
+            scanf("%d\r\n", &n); // numero de linhas a serem lidas
 
+            for (int i = 0; i < n; i++) {
+                int numCampos;
+                scanf("%d ", &numCampos);
+
+                n_campos = capturaCampos(numCampos);
+                removerRegistros(tipoArquivo, parametro1, parametro2, n_campos, numCampos);
+
+                free(n_campos);
+            }
+
+            break;
+
+        case 7:
+
+            break;
+
+        case 8:
+            
+            break;
+
+        case 9: // TESTE, REMOVER DPS
             scanf("%s\r\n", parametro1); // nome do arquivo de dados
 
             FILE *meu = fopen(parametro1, "rb");
@@ -88,14 +112,6 @@ int main() {
 
             fclose(meu);
 
-            break;
-
-        case 7:
-
-            break;
-
-        case 8:
-            
             break;
     
         default:

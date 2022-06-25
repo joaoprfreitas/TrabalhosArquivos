@@ -11,6 +11,7 @@
 #include <string.h>
 #include <regTamanhoFixo.h>
 #include <regTamanhoVariavel.h>
+#include <constantes.h>
 
 FILE *criarArquivoBinario(char *fileName);
 void setRegistroCabecalho(FILE *fileName, char *tipoArquivo);

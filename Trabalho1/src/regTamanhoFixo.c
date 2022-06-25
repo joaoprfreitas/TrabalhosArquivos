@@ -11,7 +11,7 @@
 #define TAM_REGISTRO_FIXO 97
 #define TAM_CAMPOS_FIXO 19
 #define POS_CABECALHO_PROXIMO_RRN 174
-#define TAM_CABECALHO 182
+#define TAM_CABECALHO_FIXO 182
 
 
 /*
@@ -246,7 +246,7 @@ int lerTodosRegistrosFixos(FILE *f) {
  */
 regFixo *lerRegistroFixo(FILE *f, int RRN) {
     regFixo *r = malloc(sizeof(regFixo));
-    fseek(f, TAM_CABECALHO + (TAM_REGISTRO_FIXO * RRN), SEEK_SET);
+    fseek(f, TAM_CABECALHO_FIXO + (TAM_REGISTRO_FIXO * RRN), SEEK_SET);
 
     fread(&r->removido, sizeof(char), 1, f);
     fread(&r->prox, sizeof(int), 1, f);
@@ -396,7 +396,9 @@ int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos){
             if (r->tamCidade != -1 && (!strcmp(n_campos[i].str2, r->cidade)))
                 contadorDeMatchs++;        
             if (r->qtt != -1 && (atoi(n_campos[i].str2) == r->qtt))
-                contadorDeMatchs++;        
+                contadorDeMatchs++;
+            if (r->sigla != "" && (!strcmp(n_campos[i].str2, r->sigla)))
+                contadorDeMatchs++;
       }       
       
       if(contadorDeMatchs == totalCampos)
@@ -420,4 +422,64 @@ void realizarIndexacaoRegFixo(FILE *dados, FILE *index) {
 
         freeRegistroFixo(r);
     }
+}
+
+/*
+TOPO: byte 1 FIXO (int)
+NUMREMOVIDOS: byte 178 FIXO (int)
+
+TOPO: byte 1 VARIAVEL (long long int)
+NUMREMOVIDOS: byte 186 VARIAVEL (long long int)
+
+*/
+
+int getTopo(FILE *arquivoDados) {
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
+    int topo;
+    fread(&topo, sizeof(int), 1, arquivoDados);
+
+    return topo;
+}
+
+void setTopo(FILE *arquivoDados, int topo) {
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
+    fwrite(&topo, sizeof(int), 1, arquivoDados);
+}
+
+int getNumRegRemovidos(FILE *arquivoDados) {
+    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
+    int numRemovidos;
+    fread(&numRemovidos, sizeof(int), 1, arquivoDados);
+
+    return numRemovidos;
+}
+
+void setNumRegRemovidos(FILE *arquivoDados, int numRemovidos) {
+    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
+    fwrite(&numRemovidos, sizeof(int), 1, arquivoDados);
+}
+
+// setar os lixos????
+int removerRegistroFixo(FILE *arquivoDados, FILE *arquivoIndex, index_t *index, campos campo, int localDeBusca) {
+    if (localDeBusca == 0) {
+        int RRN = buscaBinariaIndex(atoi(campo.str2), index);
+        if (RRN == -1) return -1; // Registro não encontrado
+
+        int byteRegistro = TAM_CABECALHO_FIXO + (RRN * TAM_REGISTRO_FIXO);
+        int topo = getTopo(arquivoDados);
+
+        fseek(arquivoDados, byteRegistro, SEEK_SET);
+        fwrite("1", sizeof(char), 1, arquivoDados);
+        fwrite(&topo, sizeof(int), 1, arquivoDados);
+        setTopo(arquivoDados, RRN);
+        setNumRegRemovidos(arquivoDados, getNumRegRemovidos(arquivoDados) + 1);
+
+        return 1; // removido com sucesso
+    }
+
+    // id ano qtt sigla cidade modelo marca
+    if (!strcmp(campo.str1, ""))
+
+
+
 }

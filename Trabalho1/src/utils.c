@@ -6,6 +6,8 @@
 
 #include <utils.h>
 
+#define SIZEOF(arr) sizeof(arr) / sizeof(*arr)
+
 #define CSV_DELIMITER ","
 #define CSV_COLS 7
 #define BUFFER_SIZE 32
@@ -125,7 +127,6 @@ bool readLineCSV(FILE *csv, data_t *data) {
  *  Faz a leitura dos campos a serem pesquisados.
  *  Retorna o vetor de campos a serem pesquisados. 
 */
-
 campos* capturaCampos(int n){
     campos* n_campos = malloc(n * sizeof(campos));
     
@@ -136,4 +137,21 @@ campos* capturaCampos(int n){
     }    
 
     return n_campos;
+}
+
+int buscaBinariaIndex(int id, index_t *index) {
+    int inicio = 0, meio;
+    int fim = index->tamanho;
+    
+    while (inicio <= fim) {
+        meio = (inicio + fim) / 2;
+        if (id == index->lista[meio].id)
+            return index->lista[meio].posicao;
+        else if (id < index->lista[meio].id)
+            fim = meio - 1;
+        else
+            inicio = meio + 1;
+    }
+    
+    return -1;
 }

@@ -396,3 +396,16 @@ void realizarIndexacaoRegVariavel(FILE *dados, FILE *index) {
         byteOffSetAtual = ftell(dados);
     } while(proxByteOffSet != byteOffSetAtual);
 }
+
+long long int getTopo(FILE *arquivoDados) {
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
+    long long int topo;
+    fread(&topo, sizeof(long long int), 1, arquivoDados);
+
+    return topo;
+}
+
+void setTopo(FILE *arquivoDados, long long int topo) {
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
+    fwrite(&topo, sizeof(long long int), 1, arquivoDados);
+}

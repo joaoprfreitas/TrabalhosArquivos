@@ -16,5 +16,6 @@ void listarTodosRegistros(char *binFileName, char *tipoArquivo);
 void getRegistroFixo(char *nomeArquivoBinario, char *tipoArquivo, int RRN);
 void listarCamposPesquisados(char* nomeArquivoBinario, campos*, int numCampos, char* tipoArquivo);
 void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice);
+void removerRegistros(char *tipoArquivo, char *arquivoDados, char *arquivoIndice, campos *n_campos, int numCampos);
 
 #endif // FUNCIONALIDADES

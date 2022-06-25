@@ -163,3 +163,52 @@ void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice) {
 
     binarioNaTela(arquivoIndice);
 }
+
+void removerRegistros(char *tipoArquivo, char *arquivoDados, char *arquivoIndice, campos *n_campos, int numCampos) {
+    if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    FILE *dados = abrirArquivoDados(arquivoDados);
+    
+    if (dados == NULL) {  // Problema ao abrir o arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+    
+    if (getStatus(dados) == '0') { // Arquivo inconsistente
+        printf("Falha no processamento do arquivo.\n");
+        fclose(dados);
+        return;
+    }
+
+    FILE *index = abrirArquivoDados(arquivoIndice);
+
+    if (index == NULL) {  // Problema ao abrir o arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    if (getStatus(index) == '0') { // Arquivo inconsistente
+        printf("Falha no processamento do arquivo.\n");
+        fclose(index);
+        return;
+    }
+
+    setStatusInconsistente(dados);
+    setStatusInconsistente(index);
+
+    // Colocar a função aqui
+    
+
+    
+    setStatusConsistente(dados);
+    setStatusConsistente(index);
+
+    fclose(dados);
+    fclose(index);
+
+    binarioNaTela(arquivoDados);
+    binarioNaTela(arquivoIndice);
+}

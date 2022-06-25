@@ -11,6 +11,7 @@
 #include <funcionalidades.h>
 #include <string.h>
 #include <utils.h>
+#include <constantes.h>
 
 #define TAM_CABECALHO_VARIAVEL 190
 
