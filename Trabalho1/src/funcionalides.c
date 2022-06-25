@@ -7,7 +7,7 @@
 #include <funcionalidades.h>
 #include <funcoesFornecidas.h>
 #include <funcoesFornecidas.h>
-
+#include<utils.h>
 /*
  * Funcionalidade 1 do trabalho.
  *
@@ -164,7 +164,7 @@ void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice) {
     binarioNaTela(arquivoIndice);
 }
 
-void removerRegistros(char *tipoArquivo, char *arquivoDados, char *arquivoIndice, campos *n_campos, int numCampos) {
+/*void removerRegistros(char *tipoArquivo, char *arquivoDados, char *arquivoIndice, campos *n_campos, int numCampos) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
         printf("Falha no processamento do arquivo.\n");
         return;
@@ -211,4 +211,20 @@ void removerRegistros(char *tipoArquivo, char *arquivoDados, char *arquivoIndice
 
     binarioNaTela(arquivoDados);
     binarioNaTela(arquivoIndice);
+}
+*/
+
+//TODO: Ver pq o getTopo só pega 0 (caso 9 e 10)
+void insereCampos(char* tipoArquivo, campos* n_campos, char* arqBinario){
+    FILE *dados1 = criarArquivoBinario(arqBinario);
+    //FILE *dados2 = abrirArquivoDados(ArqIndice);
+    //n_campos++;
+    if(!strcmp(tipoArquivo, "tipo1")){
+        printf("(%d)", getTopo(dados1));
+
+    }
+
+
+    return;
+
 }

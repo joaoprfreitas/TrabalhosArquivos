@@ -138,6 +138,21 @@ campos* capturaCampos(int n){
 
     return n_campos;
 }
+/*
+ *  Capturando os campos um por um no formato de string (%s da funcao fornecida)
+ *  e armazenando em str2  
+*/
+campos* capturaCamposUnitarios(int n){
+    campos* n_campos = malloc(n * sizeof(campos));
+    
+    // Faz a leitura dos n campos unitários
+    for (int i = 0; i < n; i++) {
+        scan_quote_string(n_campos[i].str2);
+    }    
+
+    return n_campos;
+}
+
 
 int buscaBinariaIndex(int id, index_t *index) {
     int inicio = 0, meio;
@@ -154,4 +169,30 @@ int buscaBinariaIndex(int id, index_t *index) {
     }
     
     return -1;
+}
+
+int getTopo(FILE *arquivoDados) {
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
+    int topo;
+    fread(&topo, sizeof(int), 1, arquivoDados);
+
+    return topo;
+}
+
+void setTopo(FILE *arquivoDados, int topo) {
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
+    fwrite(&topo, sizeof(int), 1, arquivoDados);
+}
+
+int getNumRegRemovidos(FILE *arquivoDados) {
+    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
+    int numRemovidos;
+    fread(&numRemovidos, sizeof(int), 1, arquivoDados);
+
+    return numRemovidos;
+}
+
+void setNumRegRemovidos(FILE *arquivoDados, int numRemovidos) {
+    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
+    fwrite(&numRemovidos, sizeof(int), 1, arquivoDados);
 }

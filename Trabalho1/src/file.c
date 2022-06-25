@@ -272,7 +272,8 @@ void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
 // TODO: desalocar o index
 // TODO: mudar o realloc
 // TODO: tem q ordenar?
-index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoDados, FILE *arquivoIndex) {
+/*
+//index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoDados, FILE *arquivoIndex) {
     index_t index;
 
     // fseek(index, 1, SEEK_SET); // Posiciona o ponteiro para o primeiro index
@@ -292,14 +293,14 @@ index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoDados, FILE *arquivoInde
 
     return index;
 }
-
+*/
 
 int campoRemocao(campos campo) {
     if (!strcmp(campo.str1, "id")) return 0; // busca no index
 
     return 1; // busca no arquivo
 }
-
+/*
 void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, FILE *arquivoIndex, campos *n_campos, int numCampos) {
     index_t index = lerArquivoIndex(tipoArquivo, arquivoDados, arquivoIndex);
 
@@ -312,4 +313,4 @@ void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, FILE *arquivoIndex, 
     }
     
     realizarRemocaoRegVariavel(arquivoDados, arquivoIndex, n_campos, numCampos);
-}
+}*/

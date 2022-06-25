@@ -12,3 +12,4 @@ TODO:
       Verrificar as mensagens de erro a serem printadas (registro inexistente, falha no processamento, ...)
       Colocar tudo em português
       Melhorar modularização
+      Ver pq o getTopo ta pegando 0

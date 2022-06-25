@@ -397,8 +397,8 @@ int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos){
                 contadorDeMatchs++;        
             if (r->qtt != -1 && (atoi(n_campos[i].str2) == r->qtt))
                 contadorDeMatchs++;
-            if (r->sigla != "" && (!strcmp(n_campos[i].str2, r->sigla)))
-                contadorDeMatchs++;
+            /*if (r->sigla != "" && (!strcmp(n_campos[i].str2, r->sigla)))
+                contadorDeMatchs++;*/
       }       
       
       if(contadorDeMatchs == totalCampos)
@@ -433,7 +433,7 @@ NUMREMOVIDOS: byte 186 VARIAVEL (long long int)
 
 */
 
-int getTopo(FILE *arquivoDados) {
+int getTopoFixo(FILE *arquivoDados) {
     fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
     int topo;
     fread(&topo, sizeof(int), 1, arquivoDados);
@@ -441,25 +441,8 @@ int getTopo(FILE *arquivoDados) {
     return topo;
 }
 
-void setTopo(FILE *arquivoDados, int topo) {
-    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
-    fwrite(&topo, sizeof(int), 1, arquivoDados);
-}
-
-int getNumRegRemovidos(FILE *arquivoDados) {
-    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
-    int numRemovidos;
-    fread(&numRemovidos, sizeof(int), 1, arquivoDados);
-
-    return numRemovidos;
-}
-
-void setNumRegRemovidos(FILE *arquivoDados, int numRemovidos) {
-    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
-    fwrite(&numRemovidos, sizeof(int), 1, arquivoDados);
-}
-
 // setar os lixos????
+/*
 int removerRegistroFixo(FILE *arquivoDados, FILE *arquivoIndex, index_t *index, campos campo, int localDeBusca) {
     if (localDeBusca == 0) {
         int RRN = buscaBinariaIndex(atoi(campo.str2), index);
@@ -471,7 +454,7 @@ int removerRegistroFixo(FILE *arquivoDados, FILE *arquivoIndex, index_t *index, 
         fseek(arquivoDados, byteRegistro, SEEK_SET);
         fwrite("1", sizeof(char), 1, arquivoDados);
         fwrite(&topo, sizeof(int), 1, arquivoDados);
-        setTopo(arquivoDados, RRN);
+        setTopoFixo(arquivoDados, RRN);
         setNumRegRemovidos(arquivoDados, getNumRegRemovidos(arquivoDados) + 1);
 
         return 1; // removido com sucesso
@@ -480,6 +463,4 @@ int removerRegistroFixo(FILE *arquivoDados, FILE *arquivoIndex, index_t *index, 
     // id ano qtt sigla cidade modelo marca
     if (!strcmp(campo.str1, ""))
 
-
-
-}
+}*/

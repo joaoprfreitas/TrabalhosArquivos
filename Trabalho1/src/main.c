@@ -74,7 +74,7 @@ int main() {
                 scanf("%d ", &numCampos);
 
                 n_campos = capturaCampos(numCampos);
-                removerRegistros(tipoArquivo, parametro1, parametro2, n_campos, numCampos);
+                //removerRegistros(tipoArquivo, parametro1, parametro2, n_campos, numCampos);
 
                 free(n_campos);
             }
@@ -82,6 +82,13 @@ int main() {
             break;
 
         case 7:
+            scanf("%s ", parametro1); // nome do arquivo de dados
+            scanf("%s ", parametro2);  // nome arquivo de indice
+
+            scanf("%d\r\n", &n); // numero de registros a serem inseridos
+            campos* n_campos = capturaCamposUnitarios(7);
+
+            insereCampos(tipoArquivo, n_campos, parametro1);
 
             break;
 

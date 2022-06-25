@@ -38,4 +38,11 @@ bool readLineCSV(FILE *csvFileName, data_t *data);
 campos* capturaCampos(int n);
 int buscaBinariaIndex(int id, index_t *index);
 
+campos* capturaCamposUnitarios(int n);
+
+int getTopo(FILE *arquivoDados);
+void setTopo(FILE *arquivoDados, int topo);
+int getNumRegRemovidos(FILE *arquivoDados);
+void setNumRegRemovidos(FILE *arquivoDados, int numRemovidos);
+
 #endif // UTILS_H
