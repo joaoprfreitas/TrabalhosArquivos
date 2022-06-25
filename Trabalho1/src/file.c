@@ -145,7 +145,7 @@ void setDadosRegistroVariavel(FILE *file, char *csvFileName) {
  * Retorna um ponteiro para o arquivo criado ou NULL no caso de um problema na abertura.
  */
 FILE *abrirArquivoDados(char *fileName) {
-    FILE *f = fopen(fileName, "rb");
+    FILE *f = fopen(fileName, "rb+");
 
     if (f == NULL) return NULL;
 
@@ -272,8 +272,8 @@ void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
 // TODO: desalocar o index
 // TODO: mudar o realloc
 // TODO: tem q ordenar?
-/*
-//index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoDados, FILE *arquivoIndex) {
+
+index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoIndex) {
     index_t index;
 
     // fseek(index, 1, SEEK_SET); // Posiciona o ponteiro para o primeiro index
@@ -286,6 +286,8 @@ void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
         index.lista = realloc(index.lista, (index.tamanho + 1) * sizeof(index_t));
 
         index.lista[index.tamanho].id = idAuxiliar;
+
+        index.lista[index.tamanho].posicao = 0; // Inicializa a variável
         fread(&index.lista[index.tamanho].posicao, tamanhoPosicao, 1, arquivoIndex);
 
         index.tamanho++;
@@ -293,24 +295,28 @@ void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
 
     return index;
 }
-*/
 
-int campoRemocao(campos campo) {
-    if (!strcmp(campo.str1, "id")) return 0; // busca no index
+FILE *atualizarArquivoIndex(char *nomeIndex, char *tipoArquivo, index_t index) {
+    FILE *novoIndex = criarArquivoBinario(nomeIndex);
 
-    return 1; // busca no arquivo
+    int tamanhoPosicao = (!strcmp(tipoArquivo, "tipo1")) ? sizeof(int) : sizeof(long long int);
+
+    setStatusConsistente(novoIndex);
+
+    for (int i = 0; i < index.tamanho; i++) {
+        fwrite(&index.lista[i].id, sizeof(int), 1, novoIndex);
+        fwrite(&index.lista[i].posicao, tamanhoPosicao, 1, novoIndex);
+    }
+
+    return novoIndex;
 }
-/*
-void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, FILE *arquivoIndex, campos *n_campos, int numCampos) {
-    index_t index = lerArquivoIndex(tipoArquivo, arquivoDados, arquivoIndex);
 
+void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos) {
     if (!strcmp(tipoArquivo, "tipo1")) {
-        for (int i = 0; i < numCampos; i++) {
-            removerRegistroFixo(arquivoDados, arquivoIndex, n_campos[i], campoRemocao(n_campos[i]));
-            // atualizar index
-        }
+        removerRegistroFixo(arquivoDados, index, camposNaLinha, numCampos);
         return;
     }
-    
-    realizarRemocaoRegVariavel(arquivoDados, arquivoIndex, n_campos, numCampos);
-}*/
+
+    // realizarRemocaoRegVariavel(arquivoDados, arquivoIndex, camposNaLinha, numCampos);
+}
+

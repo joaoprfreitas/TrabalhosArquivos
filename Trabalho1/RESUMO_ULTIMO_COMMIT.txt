@@ -5,6 +5,7 @@ DONE: Funcionalidade 1
       Funcionalidade 5
 
 TODO:
+      Ordenar index na funcionalidade 5
       Verificar erro no caso 20 do trabalho 1
       Funcionalidade 6
       Funcionalidade 7

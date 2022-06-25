@@ -20,7 +20,8 @@ int main() {
     int RRN; // Valor do RRN a ser buscado
     int n; // Numero de campos
 
-    campos* n_campos; // Vetor dos campos a serem buscados
+    campos *n_campos; // Vetor dos campos a serem buscados
+    campos **camposBuscados;
 
     scanf("%d ", &funcionalidade);
     scanf("%s ", tipoArquivo);
@@ -69,26 +70,33 @@ int main() {
             scanf("%s ", parametro2);  // nome arquivo de indice
             scanf("%d\r\n", &n); // numero de linhas a serem lidas
 
+            camposBuscados = malloc(sizeof(campos *) * n);
+            int *numCampos = malloc(sizeof(int) * n);
+
             for (int i = 0; i < n; i++) {
-                int numCampos;
-                scanf("%d ", &numCampos);
-
-                n_campos = capturaCampos(numCampos);
-                //removerRegistros(tipoArquivo, parametro1, parametro2, n_campos, numCampos);
-
-                free(n_campos);
+                scanf("%d ", &numCampos[i]);
+                camposBuscados[i] = capturaCampos(numCampos[i]);
             }
+
+            removerRegistros(tipoArquivo, parametro1, parametro2, camposBuscados, numCampos, n);
+
+            for (int i = 0; i < n; i++) {
+                free(camposBuscados[i]);
+            }
+
+            free(camposBuscados);
+            free(numCampos);
 
             break;
 
         case 7:
-            scanf("%s ", parametro1); // nome do arquivo de dados
-            scanf("%s ", parametro2);  // nome arquivo de indice
+            // scanf("%s ", parametro1); // nome do arquivo de dados
+            // scanf("%s ", parametro2);  // nome arquivo de indice
 
-            scanf("%d\r\n", &n); // numero de registros a serem inseridos
-            campos* n_campos = capturaCamposUnitarios(7);
+            // scanf("%d\r\n", &n); // numero de registros a serem inseridos
+            // campos* n_campos = capturaCamposUnitarios(7);
 
-            insereCampos(tipoArquivo, n_campos, parametro1);
+            // insereCampos(tipoArquivo, n_campos, parametro1);
 
             break;
 
@@ -104,18 +112,16 @@ int main() {
             fseek(meu, 1, SEEK_SET);
 
             int id1;
-            long long int byte1;
-
-            long long int eof;
+            int rrn;
+            int eof;
 
             do {
                 fread(&id1, sizeof(int), 1, meu);
-                eof = fread(&byte1, sizeof(long long int), 1, meu);
+                eof = fread(&rrn, sizeof(int), 1, meu);
 
-                printf("%d\n", id1);
-                printf("%lld\n", byte1);
+                printf("%d %d\n", id1, rrn);
 
-            } while (eof > 0);
+            } while (eof != 0);
 
             fclose(meu);
 

@@ -161,7 +161,7 @@ int buscaBinariaIndex(int id, index_t *index) {
     while (inicio <= fim) {
         meio = (inicio + fim) / 2;
         if (id == index->lista[meio].id)
-            return index->lista[meio].posicao;
+            return meio;
         else if (id < index->lista[meio].id)
             fim = meio - 1;
         else

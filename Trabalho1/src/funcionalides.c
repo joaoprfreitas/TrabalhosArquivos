@@ -164,67 +164,83 @@ void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice) {
     binarioNaTela(arquivoIndice);
 }
 
-/*void removerRegistros(char *tipoArquivo, char *arquivoDados, char *arquivoIndice, campos *n_campos, int numCampos) {
+void removerRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, campos **camposBuscados, int *numCamposPorLinha, int numLinhas) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
         printf("Falha no processamento do arquivo.\n");
         return;
     }
 
-    FILE *dados = abrirArquivoDados(arquivoDados);
+    FILE *arquivoDados = abrirArquivoDados(nomeArquivoDados);
     
-    if (dados == NULL) {  // Problema ao abrir o arquivo
+    if (arquivoDados == NULL) {  // Problema ao abrir o arquivo
         printf("Falha no processamento do arquivo.\n");
         return;
     }
     
-    if (getStatus(dados) == '0') { // Arquivo inconsistente
+    if (getStatus(arquivoDados) == '0') { // Arquivo inconsistente
         printf("Falha no processamento do arquivo.\n");
-        fclose(dados);
+        fclose(arquivoDados);
         return;
     }
 
-    FILE *index = abrirArquivoDados(arquivoIndice);
+    FILE *arquivoIndex = abrirArquivoDados(nomeArquivoIndice);
 
-    if (index == NULL) {  // Problema ao abrir o arquivo
+    if (arquivoIndex == NULL) {  // Problema ao abrir o arquivo
         printf("Falha no processamento do arquivo.\n");
         return;
     }
 
-    if (getStatus(index) == '0') { // Arquivo inconsistente
+    if (getStatus(arquivoIndex) == '0') { // Arquivo inconsistente
         printf("Falha no processamento do arquivo.\n");
-        fclose(index);
+        fclose(arquivoIndex);
         return;
     }
 
-    setStatusInconsistente(dados);
-    setStatusInconsistente(index);
+    setStatusInconsistente(arquivoDados);
+    setStatusInconsistente(arquivoIndex);
 
-    // Colocar a função aqui
+    index_t index = lerArquivoIndex(tipoArquivo, arquivoIndex);
+
+    fclose(arquivoIndex);
+
+    // for (int i = 0; i < index.tamanho; i++) {
+    //     printf("%d %lld\n", index.lista[i].id, index.lista[i].posicao);
+    // }
+
+    for (int i = 0; i < numLinhas; i++) {
+        realizarRemocao(tipoArquivo, arquivoDados, &index, camposBuscados[i], numCamposPorLinha[i]);
+
+        // printf("LINHA %d: ", i);
+        // for (int j = 0; j < numCamposPorLinha[i]; j++) {
+        //     printf("%s %s ", camposBuscados[i][j].str1, camposBuscados[i][j].str2);
+        // }
+        // printf("\n");
+    }
+
+    arquivoIndex = atualizarArquivoIndex(nomeArquivoIndice, tipoArquivo, index);
+
+    free(index.lista);
     
+    setStatusConsistente(arquivoDados);
 
-    
-    setStatusConsistente(dados);
-    setStatusConsistente(index);
+    fclose(arquivoDados);
+    fclose(arquivoIndex);
 
-    fclose(dados);
-    fclose(index);
-
-    binarioNaTela(arquivoDados);
-    binarioNaTela(arquivoIndice);
+    binarioNaTela(nomeArquivoDados);
+    binarioNaTela(nomeArquivoIndice);
 }
-*/
 
-//TODO: Ver pq o getTopo só pega 0 (caso 9 e 10)
-void insereCampos(char* tipoArquivo, campos* n_campos, char* arqBinario){
-    FILE *dados1 = criarArquivoBinario(arqBinario);
-    //FILE *dados2 = abrirArquivoDados(ArqIndice);
-    //n_campos++;
-    if(!strcmp(tipoArquivo, "tipo1")){
-        printf("(%d)", getTopo(dados1));
+// //TODO: Ver pq o getTopo só pega 0 (caso 9 e 10)
+// void insereCampos(char* tipoArquivo, campos* n_campos, char* arqBinario){
+//     FILE *dados1 = criarArquivoBinario(arqBinario);
+//     //FILE *dados2 = abrirArquivoDados(ArqIndice);
+//     //n_campos++;
+//     if(!strcmp(tipoArquivo, "tipo1")){
+//         printf("(%d)", getTopo(dados1));
 
-    }
+//     }
 
 
-    return;
+//     return;
 
-}
+// }

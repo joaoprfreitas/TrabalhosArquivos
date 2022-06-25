@@ -84,5 +84,6 @@ void freeRegistroFixo(regFixo *r);
 int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos);
 
 void realizarIndexacaoRegFixo(FILE *dados, FILE *index);
+void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos);
 
 #endif // #REGTAMANHOFIXO_H

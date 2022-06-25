@@ -28,4 +28,8 @@ void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int n
 
 void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index);
 
+index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoIndex);
+FILE *atualizarArquivoIndex(char *nomeIndex, char *tipoArquivo, index_t index);
+void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos);
+
 #endif // FILE_H

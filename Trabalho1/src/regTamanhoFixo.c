@@ -386,7 +386,7 @@ int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos){
 
     int contadorDeMatchs = 0;
 
-        for (int i = 0; i < totalCampos; i++){
+        for (int i = 0; i < totalCampos; i++) {
             if (r->tamMarca != -1 && (!strcmp(n_campos[i].str2, r->marca)))
                 contadorDeMatchs++;
             if (r->tamModelo != -1 && (!strcmp(n_campos[i].str2, r->modelo)))
@@ -397,9 +397,11 @@ int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos){
                 contadorDeMatchs++;        
             if (r->qtt != -1 && (atoi(n_campos[i].str2) == r->qtt))
                 contadorDeMatchs++;
-            /*if (r->sigla != "" && (!strcmp(n_campos[i].str2, r->sigla)))
-                contadorDeMatchs++;*/
-      }       
+            if (!strcmp(n_campos[i].str2, r->sigla))
+                contadorDeMatchs++;
+            if (r->id != -1 && (atoi(n_campos[i].str2) == r->id))
+                contadorDeMatchs++;
+        }       
       
       if(contadorDeMatchs == totalCampos)
           return 0; 
@@ -424,15 +426,6 @@ void realizarIndexacaoRegFixo(FILE *dados, FILE *index) {
     }
 }
 
-/*
-TOPO: byte 1 FIXO (int)
-NUMREMOVIDOS: byte 178 FIXO (int)
-
-TOPO: byte 1 VARIAVEL (long long int)
-NUMREMOVIDOS: byte 186 VARIAVEL (long long int)
-
-*/
-
 int getTopoFixo(FILE *arquivoDados) {
     fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
     int topo;
@@ -441,26 +434,84 @@ int getTopoFixo(FILE *arquivoDados) {
     return topo;
 }
 
+void setTopoFixo(FILE *arquivoDados, int topo) {
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
+    fwrite(&topo, sizeof(int), 1, arquivoDados);
+}
+
 // setar os lixos????
-/*
-int removerRegistroFixo(FILE *arquivoDados, FILE *arquivoIndex, index_t *index, campos campo, int localDeBusca) {
-    if (localDeBusca == 0) {
-        int RRN = buscaBinariaIndex(atoi(campo.str2), index);
-        if (RRN == -1) return -1; // Registro não encontrado
+void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos) {
+    bool buscaNoIndex = false;
 
-        int byteRegistro = TAM_CABECALHO_FIXO + (RRN * TAM_REGISTRO_FIXO);
-        int topo = getTopo(arquivoDados);
-
-        fseek(arquivoDados, byteRegistro, SEEK_SET);
-        fwrite("1", sizeof(char), 1, arquivoDados);
-        fwrite(&topo, sizeof(int), 1, arquivoDados);
-        setTopoFixo(arquivoDados, RRN);
-        setNumRegRemovidos(arquivoDados, getNumRegRemovidos(arquivoDados) + 1);
-
-        return 1; // removido com sucesso
+    for (int i = 0; i < numCampos; i++) {
+        if (!strcmp(camposNaLinha[i].str1, "id")) {
+            buscaNoIndex = true;
+            break;
+        }
     }
 
-    // id ano qtt sigla cidade modelo marca
-    if (!strcmp(campo.str1, ""))
+    if (buscaNoIndex) { // supondo q o id sempre será o primeiro campo
+        int posicaoId = buscaBinariaIndex(atoi(camposNaLinha[0].str2), index);
+        int RRN = index->lista[posicaoId].posicao;
 
-}*/
+        if (RRN == -1) return; // Registro não encontrado
+
+        regFixo *r = lerRegistroFixo(arquivoDados, RRN);
+
+        if (verificaCamposFixos(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
+            int byteRegistro = TAM_CABECALHO_FIXO + (RRN * TAM_REGISTRO_FIXO);
+            int topo = getTopoFixo(arquivoDados);
+            fseek(arquivoDados, byteRegistro, SEEK_SET);
+
+            fwrite("1", sizeof(char), 1, arquivoDados);
+            fwrite(&topo, sizeof(int), 1, arquivoDados);
+
+            setTopoFixo(arquivoDados, RRN);
+            setNumRegRemovidos(arquivoDados, getNumRegRemovidos(arquivoDados) + 1);
+
+            // shift no index
+            for (int i = posicaoId; i < (*index).tamanho; i++) {
+                (*index).lista[i] = (*index).lista[i + 1];
+            }
+
+            (*index).tamanho--;
+        }
+
+        freeRegistroFixo(r);
+
+        return; // removido com sucesso
+    }
+
+    int numTotalRRN = getNumeroRegistros(arquivoDados);
+    if (numTotalRRN == 0) return;
+
+    for (int rrn = 0; rrn <= numTotalRRN; rrn++) {
+        regFixo *r = lerRegistroFixo(arquivoDados, rrn);
+
+        if (r->removido == '0' && (verificaCamposFixos(r, camposNaLinha, numCampos) == 0)) { // Registro encontrado
+            int byteRegistro = TAM_CABECALHO_FIXO + (rrn * TAM_REGISTRO_FIXO);
+            int topo = getTopoFixo(arquivoDados);
+            fseek(arquivoDados, byteRegistro, SEEK_SET);
+
+            fwrite("1", sizeof(char), 1, arquivoDados);
+            fwrite(&topo, sizeof(int), 1, arquivoDados);
+
+            setTopoFixo(arquivoDados, rrn);
+            setNumRegRemovidos(arquivoDados, getNumRegRemovidos(arquivoDados) + 1);
+
+            // shift no index
+            for (int i = 0; i < (*index).tamanho; i++) { // Procura qual o id do rrn removido
+
+                if ((*index).lista[i].posicao == rrn) { // se encontrou
+                    for (int j = i; j < (*index).tamanho; j++) { // realiza o shift do index
+                        (*index).lista[j] = (*index).lista[j + 1];
+                    }
+                    (*index).tamanho--;
+                    break;
+                }
+            }
+        }
+
+        freeRegistroFixo(r);
+    }
+}
