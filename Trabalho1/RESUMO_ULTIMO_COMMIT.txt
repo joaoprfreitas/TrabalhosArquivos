@@ -14,3 +14,8 @@ TODO:
       Verrificar as mensagens de erro a serem printadas (registro inexistente, falha no processamento, ...)
       Colocar tudo em português
       Melhorar modularização
+
+
+hexdump -Cv binarioX.bin > my.hex
+hexdump -Cv depois/binarioX.bin > answer.hex
+diff my.hex answer.hex

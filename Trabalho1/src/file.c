@@ -374,9 +374,14 @@ void realizarInsercao(char *tipoArquivo, FILE *arquivoDados, index_t *index, dat
         return;
     }
 
-    // Verificar se cabe nos removidos
-    // se couber, insere no primeiro
-    // se nao, insere no final
     inserirRegistroVariavel(arquivoDados, index, data);
 }
 
+void realizarAtualizacao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro) {
+    if (!strcmp(tipoArquivo, "tipo1")) {
+        atualizarRegistroFixo(arquivoDados, index,camposNaLinha, numCampos, camposNovoRegistro, numCamposNovoRegistro);
+        return;
+    }
+
+    // atualizarRegistroVariavel();
+}

@@ -114,6 +114,49 @@ int main() {
             break;
 
         case 8:
+            scanf("%s ", parametro1); // nome do arquivo de dados
+            scanf("%s ", parametro2);  // nome arquivo de indice
+            scanf("%d\r\n", &n); // numero de linhas a serem lidas
+
+            camposBuscados = malloc(sizeof(campos *) * n);
+            campos **novosValores = malloc(sizeof(campos *) * n);
+
+            numCampos = malloc(sizeof(int) * n);
+            int *numCamposNovosValores = malloc(sizeof(int) * n);
+
+            for (int i = 0; i < n; i++) {
+                scanf("%d ", &numCampos[i]);
+                camposBuscados[i] = capturaCampos(numCampos[i]);
+                scanf("%d ", &numCamposNovosValores[i]);
+                novosValores[i] = capturaCampos(numCampos[i]);
+            }
+
+            // for (int i = 0; i < n; i++) {
+                
+            //     printf("BUSCA: ");
+            //     for (int j = 0; j < numCampos[i]; j++) {
+            //         printf("%s %s|", camposBuscados[i][j].str1, camposBuscados[i][j].str2);
+            //     }
+            //     printf("\n");
+
+            //     printf("NOVOS VALORES: ");
+            //     for (int j = 0; j < numCamposNovosValores[i]; j++) {
+            //         printf("%s %s|", novosValores[i][j].str1, novosValores[i][j].str2);
+            //     }
+            //     printf("\n");
+            // }
+
+            atualizarRegistros(tipoArquivo, parametro1, parametro2, camposBuscados, numCampos, novosValores, numCamposNovosValores, n);
+
+            for (int i = 0; i < n; i++) {
+                free(camposBuscados[i]);
+                free(novosValores[i]);
+            }
+
+            free(camposBuscados);
+            free(numCampos);
+            free(novosValores);
+            free(numCamposNovosValores);
             
             break;
 

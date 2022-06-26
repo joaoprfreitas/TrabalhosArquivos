@@ -34,5 +34,6 @@ FILE *atualizarArquivoIndex(char *nomeIndex, char *tipoArquivo, index_t index);
 void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos);
 void realizarInsercao(char *tipoArquivo, FILE *arquivoDados, index_t *index, data_t *data);
 void inserirNoIndex(index_t *index, int id, long long int posicao);
+void realizarAtualizacao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro);
 
 #endif // FILE_H

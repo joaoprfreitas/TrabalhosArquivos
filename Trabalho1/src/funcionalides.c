@@ -286,3 +286,59 @@ void insereRegistros(char* tipoArquivo, char *nomeArquivoDados, char *nomeArquiv
     binarioNaTela(nomeArquivoDados);
     binarioNaTela(nomeArquivoIndice);
 }
+
+void atualizarRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, campos **camposBuscados, int *numCamposPorLinha, campos **novosValores, int *numCamposPorLinhaNovosValores, int numLinhas) {
+    if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    FILE *arquivoDados = abrirArquivoDados(nomeArquivoDados);
+    
+    if (arquivoDados == NULL) {  // Problema ao abrir o arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+    
+    if (getStatus(arquivoDados) == '0') { // Arquivo inconsistente
+        printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoDados);
+        return;
+    }
+
+    FILE *arquivoIndex = abrirArquivoDados(nomeArquivoIndice);
+
+    if (arquivoIndex == NULL) {  // Problema ao abrir o arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    if (getStatus(arquivoIndex) == '0') { // Arquivo inconsistente
+        printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoIndex);
+        return;
+    }
+
+    setStatusInconsistente(arquivoDados);
+    setStatusInconsistente(arquivoIndex);
+
+    index_t index = lerArquivoIndex(tipoArquivo, arquivoIndex);
+
+    fclose(arquivoIndex);
+
+    for (int i = 0; i < numLinhas; i++) {
+        realizarAtualizacao(tipoArquivo, arquivoDados, &index, camposBuscados[i], numCamposPorLinha[i], novosValores[i], numCamposPorLinhaNovosValores[i]);
+    }
+
+    arquivoIndex = atualizarArquivoIndex(nomeArquivoIndice, tipoArquivo, index);
+
+    free(index.lista);
+    
+    setStatusConsistente(arquivoDados);
+
+    fclose(arquivoDados);
+    fclose(arquivoIndex);
+
+    binarioNaTela(nomeArquivoDados);
+    binarioNaTela(nomeArquivoIndice);
+}

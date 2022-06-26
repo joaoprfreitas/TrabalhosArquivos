@@ -18,6 +18,7 @@ void listarCamposPesquisados(char* nomeArquivoBinario, campos*, int numCampos, c
 void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice);
 void removerRegistros(char *tipoArquivo, char *arquivoDados, char *arquivoIndice, campos **camposBuscados, int *numCamposPorLinha, int numLinhas);
 void insereRegistros(char* tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, data_t *data, int numRegistros);
+void atualizarRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, campos **camposBuscados, int *numCamposPorLinha, campos **novosValores, int *numCamposPorLinhaNovosValores, int numLinhas);
 
 
 
