@@ -90,13 +90,26 @@ int main() {
             break;
 
         case 7:
-            // scanf("%s ", parametro1); // nome do arquivo de dados
-            // scanf("%s ", parametro2);  // nome arquivo de indice
+            scanf("%s ", parametro1); // nome do arquivo de dados
+            scanf("%s ", parametro2);  // nome arquivo de indice
 
-            // scanf("%d\r\n", &n); // numero de registros a serem inseridos
-            // campos* n_campos = capturaCamposUnitarios(7);
+            scanf("%d\r\n", &n); // numero de registros a serem inseridos
 
-            // insereCampos(tipoArquivo, n_campos, parametro1);
+            data_t *data = malloc(sizeof(data_t) * n);
+
+            for (int i = 0; i < n; i++) {
+                data[i] = lerLinhaDadosInserir();
+            }
+
+            insereRegistros(tipoArquivo, parametro1, parametro2, data, n);
+
+            for (int i = 0; i < n; i++) {
+                free(data[i].cidade);
+                free(data[i].marca);
+                free(data[i].modelo);
+            }
+
+            free(data);
 
             break;
 
@@ -122,6 +135,25 @@ int main() {
             } while (eof != 0);
 
             fclose(meu);
+
+            break;
+
+        case 10:
+            scanf("%s\r\n", parametro1); // nome do arquivo binario
+            
+            FILE *f = fopen(parametro1, "rb");
+            fseek(f, 20125, SEEK_SET);
+            char removido;
+            int tamanho;
+            long long int prox;
+
+            fread(&removido, sizeof(char), 1, f);
+            fread(&tamanho, sizeof(int), 1, f);
+            fread(&prox, sizeof(long long int), 1, f);
+
+            printf("%c %d %lld\n", removido, tamanho, prox);
+
+            fclose(f);
 
             break;
     

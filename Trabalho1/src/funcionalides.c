@@ -230,17 +230,59 @@ void removerRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArqui
     binarioNaTela(nomeArquivoIndice);
 }
 
-// //TODO: Ver pq o getTopo só pega 0 (caso 9 e 10)
-// void insereCampos(char* tipoArquivo, campos* n_campos, char* arqBinario){
-//     FILE *dados1 = criarArquivoBinario(arqBinario);
-//     //FILE *dados2 = abrirArquivoDados(ArqIndice);
-//     //n_campos++;
-//     if(!strcmp(tipoArquivo, "tipo1")){
-//         printf("(%d)", getTopo(dados1));
+//TODO: Ver pq o getTopo só pega 0 (caso 9 e 10)
+void insereRegistros(char* tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, data_t *data, int numRegistros) {
+    if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
-//     }
+    FILE *arquivoDados = abrirArquivoDados(nomeArquivoDados);
+    
+    if (arquivoDados == NULL) {  // Problema ao abrir o arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+    
+    if (getStatus(arquivoDados) == '0') { // Arquivo inconsistente
+        printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoDados);
+        return;
+    }
 
+    FILE *arquivoIndex = abrirArquivoDados(nomeArquivoIndice);
 
-//     return;
+    if (arquivoIndex == NULL) {  // Problema ao abrir o arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
-// }
+    if (getStatus(arquivoIndex) == '0') { // Arquivo inconsistente
+        printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoIndex);
+        return;
+    }
+
+    setStatusInconsistente(arquivoDados);
+    setStatusInconsistente(arquivoIndex);
+
+    index_t index = lerArquivoIndex(tipoArquivo, arquivoIndex);
+
+    fclose(arquivoIndex);
+
+    for (int i = 0; i < numRegistros; i++) {
+        realizarInsercao(tipoArquivo, arquivoDados, &index, &data[i]);
+    }
+
+    arquivoIndex = atualizarArquivoIndex(nomeArquivoIndice, tipoArquivo, index);
+
+    free(index.lista);
+    
+    setStatusConsistente(arquivoDados);
+
+    fclose(arquivoDados);
+    fclose(arquivoIndex);
+
+    binarioNaTela(nomeArquivoDados);
+    binarioNaTela(nomeArquivoIndice);
+}

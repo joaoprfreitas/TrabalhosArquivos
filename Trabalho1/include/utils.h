@@ -38,9 +38,10 @@ bool readLineCSV(FILE *csvFileName, data_t *data);
 campos* capturaCampos(int n);
 int buscaBinariaIndex(int id, index_t *index);
 
-campos* capturaCamposUnitarios(int n);
-
 int getPosListaTopo(topo_t lista, int tamanhoRegistro);
 void inserirListaTopo(topo_t *lista, int pos, int tamanhoRegistro);
+
+data_t lerLinhaDadosInserir();
+void quickSortIndex(index_t *index, int ini, int fim);
 
 #endif // UTILS_H

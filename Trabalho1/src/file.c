@@ -311,6 +311,17 @@ FILE *atualizarArquivoIndex(char *nomeIndex, char *tipoArquivo, index_t index) {
     return novoIndex;
 }
 
+void inserirNoIndex(index_t *index, int id, long long int posicao) {
+    index->lista = realloc(index->lista, (index->tamanho + 1) * sizeof(index_t));
+
+    index->lista[index->tamanho].id = id;
+    index->lista[index->tamanho].posicao = posicao;
+
+    index->tamanho = index->tamanho + 1;
+
+    quickSortIndex(index, 0, index->tamanho - 1);
+}
+
 topo_t leituraTopoRegVariavel(FILE *arquivoDados) {
     topo_t lista;
     lista.tamanhoLista = getNumRegRemovidosVariavel(arquivoDados);
@@ -318,7 +329,6 @@ topo_t leituraTopoRegVariavel(FILE *arquivoDados) {
 
     fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
     
-    // Colocar o -1???
     for (int i = 0; i < lista.tamanhoLista; i++) {
         fread(&lista.lista[i].topo, sizeof(long long int), 1, arquivoDados); // Lê o byteoffset
         fseek(arquivoDados, lista.lista[i].topo, SEEK_SET); // Vai para o byteoffset
@@ -358,5 +368,17 @@ void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, index_t *index, camp
     atualizarListaTopo(arquivoDados, listaTopo);
 
     free(listaTopo.lista);
+}
+
+void realizarInsercao(char *tipoArquivo, FILE *arquivoDados, index_t *index, data_t *data) {
+    if (!strcmp(tipoArquivo, "tipo1")) {
+        inserirRegistroFixo(arquivoDados, index, data);
+        return;
+    }
+
+    // Verificar se cabe nos removidos
+    // se couber, insere no primeiro
+    // se nao, insere no final
+    inserirRegistroVariavel(arquivoDados, index, data);
 }
 

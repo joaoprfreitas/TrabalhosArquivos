@@ -528,3 +528,52 @@ void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLin
         freeRegistroFixo(r);
     }
 }
+
+// TODO: atualizar o index, inserindo ordenado a nova posição do novo registro
+void inserirRegistroFixo(FILE *arquivoDados, index_t *index, data_t *data) {
+    int idInserido;
+    long long int rrnInserido;
+
+    if (getNumRegRemovidosFixo(arquivoDados) > 0) { // Insere na posição do topo
+        int topo = getTopoFixo(arquivoDados);
+        int novoTopo;
+
+        fseek(arquivoDados, TAM_CABECALHO_FIXO + (topo * TAM_REGISTRO_FIXO) + 1, SEEK_SET); // Posiciona na posição do topo do registro
+        fread(&novoTopo, sizeof(int), 1, arquivoDados); // Lê a posição do próximo registro vazio
+
+        fseek(arquivoDados, TAM_CABECALHO_FIXO + (topo * TAM_REGISTRO_FIXO), SEEK_SET); // Posiciona na posição em que será inserido o registro
+
+        regFixo r = formatRegistroFixo(data);
+        addRegistroFixo(arquivoDados, &r);
+
+        idInserido = r.id;
+        rrnInserido = topo;
+
+        free(r.cidade);
+        free(r.marca);
+        free(r.modelo);
+
+        setTopoFixo(arquivoDados, novoTopo); // Atualiza o topo no registro de cabeçalho
+        setNumRegRemovidosFixo(arquivoDados, getNumRegRemovidosFixo(arquivoDados) - 1); // Atualiza o número de registros removidos no registro de cabeçalho
+
+    } else { // Insere no final
+        fseek(arquivoDados, 0, SEEK_END); // Posiciona no final do arquivo
+
+        regFixo r = formatRegistroFixo(data);
+        addRegistroFixo(arquivoDados, &r);
+
+        idInserido = r.id;
+
+        free(r.cidade);
+        free(r.marca);
+        free(r.modelo);
+
+        int proxRRN = getProxRRN(arquivoDados);
+
+        setProxRRN(arquivoDados, getProxRRN(arquivoDados) + 1); // Atualiza o próximo RRN no registro de cabeçalho
+        rrnInserido = proxRRN;
+    }
+
+    // Atualiza o index
+    inserirNoIndex(index, idInserido, rrnInserido);
+}

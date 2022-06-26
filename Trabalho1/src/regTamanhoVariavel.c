@@ -501,3 +501,63 @@ void removerRegistroVariavel(FILE *arquivoDados, topo_t *listaTopo, index_t *ind
 
     } while(proxByteOffSet != ftell(arquivoDados));
 }
+
+// TODO: atualizar o index, inserindo ordenado a nova posição do novo registro
+void inserirRegistroVariavel(FILE *arquivoDados, index_t *index, data_t *data) {
+    int idInserido;
+    long long int byteOffSetInserido;
+
+    long long int topo = getTopoVariavel(arquivoDados);
+    long long int novoTopo;
+
+    regVariavel r = formatRegistroVariavel(data);
+
+    if (topo != -1) { // Insere na posição do topo
+        fseek(arquivoDados, topo + 1, SEEK_SET); // Posiciona a cabeça de leitura para o registro
+
+        int tamanhoRegistro;
+        fread(&tamanhoRegistro, sizeof(int), 1, arquivoDados);
+        fread(&novoTopo, sizeof(long long int), 1, arquivoDados);
+
+        if (tamanhoRegistro > r.tamanhoRegistro) { // Insere nessa posição
+            int tamLixo = tamanhoRegistro - r.tamanhoRegistro;
+            fseek(arquivoDados, topo, SEEK_SET); // Posiciona a cabeça de leitura para o registro
+            r.tamanhoRegistro = tamanhoRegistro;
+            addRegistroVariavel(arquivoDados, &r);
+
+            for (int i = 0; i < tamLixo; i++) { // Preenche o restante do registro com lixo
+                fwrite("$", sizeof(char), 1, arquivoDados);
+            }
+            
+            setTopoVariavel(arquivoDados, novoTopo); // Atualiza o topo
+            setNumRegRemovidosVariavel(arquivoDados, getNumRegRemovidosVariavel(arquivoDados) - 1); // Decrementa o número de registros removidos
+
+            idInserido = r.id;
+            byteOffSetInserido = topo;
+
+            free(r.cidade);
+            free(r.marca);
+            free(r.modelo);
+
+            inserirNoIndex(index, idInserido, byteOffSetInserido); // Insere no index
+
+            return;
+        }
+        
+    } // Insere no final
+    fseek(arquivoDados, 0, SEEK_END); // Posiciona no final do arquivo
+    byteOffSetInserido = ftell(arquivoDados);
+
+    addRegistroVariavel(arquivoDados, &r);
+
+    idInserido = r.id;
+
+    free(r.cidade);
+    free(r.marca);
+    free(r.modelo);
+
+    setProxByteOffset(arquivoDados, ftell(arquivoDados)); // Atualiza o próximo RRN no registro de cabeçalho
+
+    // Atualiza o index
+    inserirNoIndex(index, idInserido, byteOffSetInserido);
+}

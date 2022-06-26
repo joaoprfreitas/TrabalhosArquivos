@@ -6,8 +6,6 @@
 
 #include <utils.h>
 
-#define SIZEOF(arr) sizeof(arr) / sizeof(*arr)
-
 #define CSV_DELIMITER ","
 #define CSV_COLS 7
 #define BUFFER_SIZE 32
@@ -138,21 +136,6 @@ campos* capturaCampos(int n){
 
     return n_campos;
 }
-/*
- *  Capturando os campos um por um no formato de string (%s da funcao fornecida)
- *  e armazenando em str2  
-*/
-campos* capturaCamposUnitarios(int n){
-    campos* n_campos = malloc(n * sizeof(campos));
-    
-    // Faz a leitura dos n campos unitários
-    for (int i = 0; i < n; i++) {
-        scan_quote_string(n_campos[i].str2);
-    }    
-
-    return n_campos;
-}
-
 
 int buscaBinariaIndex(int id, index_t *index) {
     int inicio = 0, meio;
@@ -204,4 +187,119 @@ void inserirListaTopo(topo_t *lista, int pos, int tamanhoRegistro) {
     lista->tamanhoLista++;
 
     insertionSort(lista);
+}
+
+data_t lerLinhaDadosInserir() {
+    char campo[100];
+    data_t data;
+
+    for (int i = 0; i < 7; i++) {
+        scan_quote_string(campo);
+
+        switch (i) {
+        case 0:
+            if (strcmp(campo, "")) { // Se não for nulo
+                data.id = atoi(campo);
+            } else {
+                data.id = -1;
+            }
+            break;
+
+        case 1:
+            if (strcmp(campo, "")) {
+                data.ano = atoi(campo);
+            } else {
+                data.ano = -1;
+            }
+            break;
+        
+        case 2:
+            if (strcmp(campo, "")) {
+                data.qtt = atoi(campo);
+            } else {
+                data.qtt = -1;
+            }
+            break;
+        
+        case 3:
+            if (strcmp(campo, "")) {
+                data.sigla[0] = campo[0];
+                data.sigla[1] = campo[1];
+            } else {
+                data.sigla[0] = '$';
+                data.sigla[1] = '$';
+            }
+            break;
+
+        case 4:
+            // if (strcmp(campo, "")) {
+                data.cidade = strdup(campo);
+            // } else {
+            //     data.cidade = strdup("");
+            // }
+            break;
+
+        case 5:
+            // if (strcmp(campo, "")) {
+                data.marca = strdup(campo);
+            // } else {
+            //     data.marca = strdup("");
+            // }
+            break;
+
+        case 6:
+            // if (strcmp(campo, "")) {
+                data.modelo = strdup(campo);
+            // } else {
+            //     data.modelo = strdup("");
+            // }
+            break;
+        
+        default:
+            break;
+        }
+    }
+
+    return data;
+}
+
+void quickSortIndex(index_t *index, int ini, int fim) {
+    // Caso base: vetor de tamanho 0 ou 1
+    if (ini >= fim) return;
+
+    // Partição ao redor do pivo
+        // Seleciona o pivo [... l1 ...] <= p < [... l2 ...]
+        // percorre o inicio do vetor para garantivo <= pivo
+        // percorre o fim do vetor para garantir > pivo
+    int p = ini;
+
+    // troca pivo com a 1.a pos
+    campoIndex_t tmp = index->lista[p];
+    index->lista[p] = index->lista[ini];
+    index->lista[ini] = tmp;
+
+    p = ini;
+    int i = ini + 1; // percorre l1 <= p ++
+    int j = fim; // percorre l2 > p --
+
+    while (i <= j) {
+        while (i <= fim && index->lista[i].id <= index->lista[p].id) i++;
+        while (index->lista[j].id > index->lista[p].id) j--;
+        // i e j são candidatos a troca
+        if (j > i) {
+            tmp = index->lista[i];
+            index->lista[i] = index->lista[j];
+            index->lista[j] = tmp;
+        }
+    }
+        // posicionar o pivo na sua posição ja ordenada
+        // a posição do pivo será a j
+    tmp = index->lista[p];
+    index->lista[p] = index->lista[j];
+    index->lista[j] = tmp;
+    p = j;
+
+    // Chamadas recursivas
+    quickSortIndex(index, ini, p - 1);
+    quickSortIndex(index, p + 1, fim);
 }
