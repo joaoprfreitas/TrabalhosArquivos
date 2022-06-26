@@ -692,7 +692,16 @@ void atualizarRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaL
     }
 
     if (buscaNoIndex) {
-        int posicaoId = buscaBinariaIndex(atoi(camposNaLinha[0].str2), index);
+
+        int posicaoId;
+
+        for (int i = 0; i < numCampos; i++) { // Procura a posição do ID nos campos
+            if (!strcmp(camposNaLinha[i].str1, "id")) {
+                posicaoId = buscaBinariaIndex(atoi(camposNaLinha[i].str2), index); // Realiza a busca binária passando o ID
+                break;
+            }
+        }
+
         if (posicaoId == -1) return; // Registro não encontrado
         
         int RRN = index->lista[posicaoId].posicao;
@@ -726,7 +735,6 @@ void atualizarRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaL
         regFixo *r = lerRegistroFixo(arquivoDados, rrn);
 
         if (verificaCamposFixos(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
-
             fseek(arquivoDados, TAM_CABECALHO_FIXO + (rrn * TAM_REGISTRO_FIXO), SEEK_SET);
             
             alterarRegistro(r, camposNovoRegistro, numCamposNovoRegistro);
