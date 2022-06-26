@@ -3,11 +3,13 @@ DONE: Funcionalidade 1
 	Funcionalidade 3
       Funcionalidade 4
       Funcionalidade 5
+      Funcionalidade 6
 
 TODO:
       Ordenar index na funcionalidade 5
+      Resolver erros no valgrind da funcionalidade 6
+      Otimizar funcionalidade 6
       Verificar erro no caso 20 do trabalho 1
-      Funcionalidade 6
       Funcionalidade 7
       Funcionalidade 8
       Verrificar as mensagens de erro a serem printadas (registro inexistente, falha no processamento, ...)

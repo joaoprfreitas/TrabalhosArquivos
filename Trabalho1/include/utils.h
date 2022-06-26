@@ -40,9 +40,7 @@ int buscaBinariaIndex(int id, index_t *index);
 
 campos* capturaCamposUnitarios(int n);
 
-int getTopo(FILE *arquivoDados);
-void setTopo(FILE *arquivoDados, int topo);
-int getNumRegRemovidos(FILE *arquivoDados);
-void setNumRegRemovidos(FILE *arquivoDados, int numRemovidos);
+int getPosListaTopo(topo_t lista, int tamanhoRegistro);
+void inserirListaTopo(topo_t *lista, int pos, int tamanhoRegistro);
 
 #endif // UTILS_H

@@ -11,6 +11,16 @@ typedef struct index_st {
     int tamanho;
 } index_t;
 
+typedef struct campoTopo_st {
+    int tamanho;
+    long long int topo;
+} campoTopo_t;
+
+typedef struct topo_st {
+    campoTopo_t *lista;
+    int tamanhoLista;
+} topo_t;
+
 #define CABECALHO_TOPO 1
 #define CABECALHO_NUM_REG_REMOVIDOS_FIXO 178
 #define CABECALHO_NUM_REG_REMOVIDOS_VARIAVEL 186

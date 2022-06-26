@@ -105,15 +105,13 @@ int main() {
             break;
 
         case 9: // TESTE, REMOVER DPS
-            scanf("%s\r\n", parametro1); // nome do arquivo de dados
+            scanf("%s\r\n", parametro1); // nome do arquivo de indice
 
             FILE *meu = fopen(parametro1, "rb");
 
             fseek(meu, 1, SEEK_SET);
 
-            int id1;
-            int rrn;
-            int eof;
+            int id1, rrn, eof;
 
             do {
                 fread(&id1, sizeof(int), 1, meu);

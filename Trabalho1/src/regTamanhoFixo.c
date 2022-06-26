@@ -439,6 +439,19 @@ void setTopoFixo(FILE *arquivoDados, int topo) {
     fwrite(&topo, sizeof(int), 1, arquivoDados);
 }
 
+int getNumRegRemovidosFixo(FILE *arquivoDados) {
+    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
+    int numRemovidos;
+    fread(&numRemovidos, sizeof(int), 1, arquivoDados);
+
+    return numRemovidos;
+}
+
+void setNumRegRemovidosFixo(FILE *arquivoDados, int numRemovidos) {
+    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
+    fwrite(&numRemovidos, sizeof(int), 1, arquivoDados);
+}
+
 // setar os lixos????
 void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos) {
     bool buscaNoIndex = false;
@@ -452,9 +465,9 @@ void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLin
 
     if (buscaNoIndex) { // supondo q o id sempre será o primeiro campo
         int posicaoId = buscaBinariaIndex(atoi(camposNaLinha[0].str2), index);
+        if (posicaoId == -1) return; // Registro não encontrado
+        
         int RRN = index->lista[posicaoId].posicao;
-
-        if (RRN == -1) return; // Registro não encontrado
 
         regFixo *r = lerRegistroFixo(arquivoDados, RRN);
 
@@ -467,10 +480,10 @@ void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLin
             fwrite(&topo, sizeof(int), 1, arquivoDados);
 
             setTopoFixo(arquivoDados, RRN);
-            setNumRegRemovidos(arquivoDados, getNumRegRemovidos(arquivoDados) + 1);
+            setNumRegRemovidosFixo(arquivoDados, getNumRegRemovidosFixo(arquivoDados) + 1);
 
             // shift no index
-            for (int i = posicaoId; i < (*index).tamanho; i++) {
+            for (int i = posicaoId; i < (*index).tamanho - 1; i++) {
                 (*index).lista[i] = (*index).lista[i + 1];
             }
 
@@ -497,13 +510,13 @@ void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLin
             fwrite(&topo, sizeof(int), 1, arquivoDados);
 
             setTopoFixo(arquivoDados, rrn);
-            setNumRegRemovidos(arquivoDados, getNumRegRemovidos(arquivoDados) + 1);
+            setNumRegRemovidosFixo(arquivoDados, getNumRegRemovidosFixo(arquivoDados) + 1);
 
             // shift no index
             for (int i = 0; i < (*index).tamanho; i++) { // Procura qual o id do rrn removido
 
                 if ((*index).lista[i].posicao == rrn) { // se encontrou
-                    for (int j = i; j < (*index).tamanho; j++) { // realiza o shift do index
+                    for (int j = i; j < (*index).tamanho - 1; j++) { // realiza o shift do index
                         (*index).lista[j] = (*index).lista[j + 1];
                     }
                     (*index).tamanho--;

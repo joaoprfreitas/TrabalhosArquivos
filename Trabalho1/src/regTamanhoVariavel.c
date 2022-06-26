@@ -351,7 +351,7 @@ void freeRegistroVariavel(regVariavel *r) {
  * 
  * Retorna 0 se o registro for match e -1 caso contrário.
  */
-int verificaCamposVariaveis(regVariavel* r, campos* n_campos, int totalCampos){
+int verificaCamposVariaveis(regVariavel* r, campos* n_campos, int totalCampos) {
 
     if (r->removido == '1') return -1;
     
@@ -366,7 +366,11 @@ int verificaCamposVariaveis(regVariavel* r, campos* n_campos, int totalCampos){
         if (r->tamCidade != -1 && (!strcmp(n_campos[i].str2, r->cidade)))
             contadorDeMatchs++;        
         if (r->qtt != -1 && (atoi(n_campos[i].str2) == r->qtt))
-            contadorDeMatchs++;        
+            contadorDeMatchs++;
+        if (!strcmp(n_campos[i].str2, r->sigla))
+                contadorDeMatchs++;
+        if (r->id != -1 && (atoi(n_campos[i].str2) == r->id))
+                contadorDeMatchs++;
     }
 
     if(contadorDeMatchs == totalCampos)
@@ -395,4 +399,105 @@ void realizarIndexacaoRegVariavel(FILE *dados, FILE *index) {
 
         byteOffSetAtual = ftell(dados);
     } while(proxByteOffSet != byteOffSetAtual);
+}
+
+void setTopoVariavel(FILE *dados, long long int topo) {
+    fseek(dados, CABECALHO_TOPO, SEEK_SET);
+    fwrite(&topo, sizeof(long long int), 1, dados);
+}
+
+long long int getTopoVariavel(FILE *dados) {
+    long long int topo;
+    fseek(dados, CABECALHO_TOPO, SEEK_SET);
+    fread(&topo, sizeof(long long int), 1, dados);
+
+    return topo;
+}
+
+void setNumRegRemovidosVariavel(FILE *dados, int numRegRemovidos) {
+    fseek(dados, CABECALHO_NUM_REG_REMOVIDOS_VARIAVEL, SEEK_SET);
+    fwrite(&numRegRemovidos, sizeof(int), 1, dados);
+}
+
+int getNumRegRemovidosVariavel(FILE *dados) {
+    int numRegRemovidos;
+    fseek(dados, CABECALHO_NUM_REG_REMOVIDOS_VARIAVEL, SEEK_SET);
+    fread(&numRegRemovidos, sizeof(int), 1, dados);
+
+    return numRegRemovidos;
+}
+
+void removerRegistroVariavel(FILE *arquivoDados, topo_t *listaTopo, index_t *index, campos *camposNaLinha, int numCampos) {
+    bool buscarNoIndex = false;
+
+    for (int i = 0; i < numCampos; i++) {
+        if (!strcmp(camposNaLinha[i].str1, "id")) {
+            buscarNoIndex = true;
+            break;
+        }
+    }
+
+    if (buscarNoIndex) {
+        int posicaoId = buscaBinariaIndex(atoi(camposNaLinha[0].str2), index);
+        if (posicaoId == -1) return;
+
+        long long int byteOffSet = index->lista[posicaoId].posicao;
+
+        fseek(arquivoDados, byteOffSet, SEEK_SET); // Posiciona a cabeça de leitura para o registro
+        regVariavel *r = lerRegistroVariavel(arquivoDados);
+
+        if (verificaCamposVariaveis(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
+            fseek(arquivoDados, byteOffSet, SEEK_SET); // Posiciona a cabeça de leitura para o registro
+            fwrite("1", sizeof(char), 1, arquivoDados);
+
+            inserirListaTopo(listaTopo, byteOffSet, r->tamanhoRegistro); // Insere na lista
+            setNumRegRemovidosVariavel(arquivoDados, getNumRegRemovidosVariavel(arquivoDados) + 1); // Incrementa o número de registros removidos
+
+            // shift no index
+            for (int i = posicaoId; i < (*index).tamanho - 1; i++) {
+                (*index).lista[i] = (*index).lista[i + 1];
+            }
+
+            (*index).tamanho--;
+        }
+
+        freeRegistroVariavel(r);
+
+        return;
+    }
+
+    long long int proxByteOffSet = getProxByteOffset(arquivoDados);
+    if (proxByteOffSet == 0) return;
+
+    fseek(arquivoDados, TAM_CABECALHO_VARIAVEL, SEEK_SET); // Posiciona o ponteiro para o primeiro registro
+
+    do {
+        long long int byteOffSetAtual = ftell(arquivoDados);
+
+        regVariavel *r = lerRegistroVariavel(arquivoDados);
+
+        if (verificaCamposVariaveis(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
+
+            fseek(arquivoDados, byteOffSetAtual, SEEK_SET); // Posiciona a cabeça de leitura para o registro
+            fwrite("1", sizeof(char), 1, arquivoDados);
+
+            inserirListaTopo(listaTopo, byteOffSetAtual, r->tamanhoRegistro); // Insere na lista
+            setNumRegRemovidosVariavel(arquivoDados, getNumRegRemovidosVariavel(arquivoDados) + 1); // Incrementa o número de registros removidos
+
+            // shift no index
+            for (int i = 0; i < (*index).tamanho; i++) { // Procura qual o id do rrn removido
+
+                if ((*index).lista[i].posicao == byteOffSetAtual) { // se encontrou
+                    for (int j = i; j < (*index).tamanho - 1; j++) { // realiza o shift do index
+                        (*index).lista[j] = (*index).lista[j + 1];
+                    }
+                    (*index).tamanho--;
+                    break;
+                }
+            }
+        }
+
+        freeRegistroVariavel(r);
+
+    } while(proxByteOffSet != ftell(arquivoDados));
 }

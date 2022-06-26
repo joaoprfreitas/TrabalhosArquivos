@@ -87,4 +87,11 @@ void freeRegistroVariavel(regVariavel *r);
 
 void realizarIndexacaoRegVariavel(FILE *dados, FILE *index);
 
+void setTopoVariavel(FILE *dados, long long int topo);
+long long int getTopoVariavel(FILE *dados);
+void setNumRegRemovidosVariavel(FILE *dados, int numRegRemovidos);
+int getNumRegRemovidosVariavel(FILE *dados);
+
+void removerRegistroVariavel(FILE *arquivoDados, topo_t *listaTopo, index_t *index, campos *camposNaLinha, int numCampos);
+
 #endif // #REGTAMANHOFIXO_H

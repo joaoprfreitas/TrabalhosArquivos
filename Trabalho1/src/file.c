@@ -311,12 +311,52 @@ FILE *atualizarArquivoIndex(char *nomeIndex, char *tipoArquivo, index_t index) {
     return novoIndex;
 }
 
+topo_t leituraTopoRegVariavel(FILE *arquivoDados) {
+    topo_t lista;
+    lista.tamanhoLista = getNumRegRemovidosVariavel(arquivoDados);
+    lista.lista = malloc(lista.tamanhoLista * sizeof(campoTopo_t));
+
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
+    
+    // Colocar o -1???
+    for (int i = 0; i < lista.tamanhoLista; i++) {
+        fread(&lista.lista[i].topo, sizeof(long long int), 1, arquivoDados); // Lê o byteoffset
+        fseek(arquivoDados, lista.lista[i].topo, SEEK_SET); // Vai para o byteoffset
+        char removido;
+        fread(&removido, sizeof(char), 1, arquivoDados);
+        if (removido == '1') { // Verifica se está removido
+            fread(&lista.lista[i].tamanho, sizeof(int), 1, arquivoDados); // Lê o tamanho do registro
+        }
+    }
+
+    return lista;
+}
+
+void atualizarListaTopo(FILE *arquivoDados, topo_t lista) {
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET); // Muda a cabeça de leitura para o topo
+
+    for (int i = 0; i < lista.tamanhoLista; i++) {
+        fwrite(&lista.lista[i].topo, sizeof(long long int), 1, arquivoDados); // Escreve o topo
+        fseek(arquivoDados, lista.lista[i].topo + 5, SEEK_SET); // Vai para o topo no registro
+    }
+
+    long long int valorFinal = -1;
+
+    fwrite(&valorFinal, sizeof(long long int), 1, arquivoDados); // No topo do último registro, escreve -1
+}
+
 void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos) {
     if (!strcmp(tipoArquivo, "tipo1")) {
         removerRegistroFixo(arquivoDados, index, camposNaLinha, numCampos);
         return;
     }
 
-    // realizarRemocaoRegVariavel(arquivoDados, arquivoIndex, camposNaLinha, numCampos);
+    topo_t listaTopo = leituraTopoRegVariavel(arquivoDados);
+
+    removerRegistroVariavel(arquivoDados, &listaTopo, index, camposNaLinha, numCampos);
+
+    atualizarListaTopo(arquivoDados, listaTopo);
+
+    free(listaTopo.lista);
 }
 

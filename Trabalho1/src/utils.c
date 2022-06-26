@@ -171,28 +171,37 @@ int buscaBinariaIndex(int id, index_t *index) {
     return -1;
 }
 
-int getTopo(FILE *arquivoDados) {
-    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
-    int topo;
-    fread(&topo, sizeof(int), 1, arquivoDados);
-
-    return topo;
+/*
+ * Insertion sort decrescente
+ * Melhor caso: ordenado em ordem decrescente O(n)
+ */
+void insertionSort(topo_t *listaTopo) {
+    for (int j = 1; j < listaTopo->tamanhoLista; j++) {
+        campoTopo_t chave = listaTopo->lista[j];
+        int i = j - 1;
+        while (chave.tamanho > listaTopo->lista[i].tamanho && i >= 0) {
+            listaTopo->lista[i + 1] = listaTopo->lista[i];
+            i--;
+        }
+        listaTopo->lista[i + 1] = chave;
+    }
 }
 
-void setTopo(FILE *arquivoDados, int topo) {
-    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
-    fwrite(&topo, sizeof(int), 1, arquivoDados);
+int getPosListaTopo(topo_t lista, int tamanhoRegistro) {
+    for (int i = 0; i < lista.tamanhoLista; i++) {
+        if (lista.lista[i].tamanho <= tamanhoRegistro) {
+            return i; // insere na posição i
+        }
+    }
+    return -1; // insere no final
 }
 
-int getNumRegRemovidos(FILE *arquivoDados) {
-    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
-    int numRemovidos;
-    fread(&numRemovidos, sizeof(int), 1, arquivoDados);
+void inserirListaTopo(topo_t *lista, int pos, int tamanhoRegistro) {
+    lista->lista = realloc(lista->lista, (lista->tamanhoLista + 1) * sizeof(campoTopo_t));
 
-    return numRemovidos;
-}
+    lista->lista[lista->tamanhoLista].topo = pos;
+    lista->lista[lista->tamanhoLista].tamanho = tamanhoRegistro;
+    lista->tamanhoLista++;
 
-void setNumRegRemovidos(FILE *arquivoDados, int numRemovidos) {
-    fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
-    fwrite(&numRemovidos, sizeof(int), 1, arquivoDados);
+    insertionSort(lista);
 }
