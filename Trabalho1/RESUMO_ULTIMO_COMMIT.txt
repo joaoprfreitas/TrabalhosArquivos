@@ -7,7 +7,6 @@ DONE: Funcionalidade 1
       Funcionalidade 7
 
 TODO:
-      Ordenar index na funcionalidade 5
       Resolver erros no valgrind da funcionalidade 6
       Otimizar funcionalidade 6
       Verificar erro no caso 20 do trabalho 1
@@ -15,4 +14,3 @@ TODO:
       Verrificar as mensagens de erro a serem printadas (registro inexistente, falha no processamento, ...)
       Colocar tudo em português
       Melhorar modularização
-      Ver pq o getTopo ta pegando 0

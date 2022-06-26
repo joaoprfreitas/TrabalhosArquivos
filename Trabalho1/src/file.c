@@ -269,10 +269,6 @@ void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
     realizarIndexacaoRegVariavel(dados, index);
 }
 
-// TODO: desalocar o index
-// TODO: mudar o realloc
-// TODO: tem q ordenar?
-
 index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoIndex) {
     index_t index;
 
@@ -292,6 +288,8 @@ index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoIndex) {
 
         index.tamanho++;
     }
+
+    quickSortIndex(&index, 0, index.tamanho - 1);
 
     return index;
 }
