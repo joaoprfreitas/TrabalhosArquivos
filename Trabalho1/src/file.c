@@ -428,13 +428,15 @@ void realizarInsercao(char *tipoArquivo, FILE *arquivoDados, index_t *index, dat
 }
 
 /*
- * 
+ * Verifica o tipo de arquivo, chamando a respectiva função para
+ * realizar a atualização.
  */
 void realizarAtualizacao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro) {
-    if (!strcmp(tipoArquivo, "tipo1")) {
+    if (!strcmp(tipoArquivo, "tipo1")) { // Se for do tipo 1
         atualizarRegistroFixo(arquivoDados, index, camposNaLinha, numCampos, camposNovoRegistro, numCamposNovoRegistro);
         return;
     }
+    // Caso contrário
 
     atualizarRegistroVariavel(arquivoDados, index, camposNaLinha, numCampos, camposNovoRegistro, numCamposNovoRegistro);
 }

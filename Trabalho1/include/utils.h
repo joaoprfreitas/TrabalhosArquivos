@@ -38,7 +38,6 @@ bool readLineCSV(FILE *csvFileName, data_t *data);
 campos* capturaCampos(int n);
 int buscaBinariaIndex(int id, index_t *index);
 
-int getPosListaTopo(topo_t lista, int tamanhoRegistro);
 void inserirListaTopo(topo_t *lista, int pos, int tamanhoRegistro);
 
 data_t lerLinhaDadosInserir();

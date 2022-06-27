@@ -121,21 +121,25 @@ int main() {
             scanf("%s ", parametro2);  // nome arquivo de indice
             scanf("%d\r\n", &n); // numero de linhas a serem lidas
 
-            camposBuscados = malloc(sizeof(campos *) * n);
-            campos **novosValores = malloc(sizeof(campos *) * n);
+            camposBuscados = malloc(sizeof(campos *) * n); // Cria um vetor para as informações de busca
+            campos **novosValores = malloc(sizeof(campos *) * n); // Cria um vetor para os novos campos
 
-            numCampos = malloc(sizeof(int) * n);
-            int *numCamposNovosValores = malloc(sizeof(int) * n);
+            numCampos = malloc(sizeof(int) * n); // Cria um vetor para o numero de campos de cada busca
+            int *numCamposNovosValores = malloc(sizeof(int) * n); // Cria um vetor para o numero de campos de cada novos campos
 
+            // Preenche os vetores com as informações de cada par de linhas
             for (int i = 0; i < n; i++) {
+                // 1a linha da entrada
                 scanf("%d ", &numCampos[i]);
                 camposBuscados[i] = capturaCampos(numCampos[i]);
+                // 2a linha da entrada
                 scanf("%d ", &numCamposNovosValores[i]);
                 novosValores[i] = capturaCampos(numCampos[i]);
             }
 
             atualizarRegistros(tipoArquivo, parametro1, parametro2, camposBuscados, numCampos, novosValores, numCamposNovosValores, n);
 
+            // Libera a memória auxiliar utilizada
             for (int i = 0; i < n; i++) {
                 free(camposBuscados[i]);
                 free(novosValores[i]);

@@ -175,18 +175,6 @@ void insertionSort(topo_t *listaTopo) {
 }
 
 /*
- * 
- */
-int getPosListaTopo(topo_t lista, int tamanhoRegistro) {
-    for (int i = 0; i < lista.tamanhoLista; i++) {
-        if (lista.lista[i].tamanho <= tamanhoRegistro) {
-            return i; // insere na posição i
-        }
-    }
-    return -1; // insere no final
-}
-
-/*
  * Realiza a inserção de um novo elemento na lista de topo.
  * Após a inserção, realiza uma ordenação decrescente da lista
  * por meio de um insertionSort (neste caso, O(n))

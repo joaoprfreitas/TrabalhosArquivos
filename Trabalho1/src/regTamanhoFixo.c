@@ -13,7 +13,6 @@
 #define POS_CABECALHO_PROXIMO_RRN 174
 #define TAM_CABECALHO_FIXO 182
 
-
 /*
  * Escreve  as informações do cabeçalho de um arquivo de dados
  * com registros de tamanho fixo a partir da estrutura de um
@@ -631,110 +630,113 @@ void inserirRegistroFixo(FILE *arquivoDados, index_t *index, data_t *data) {
 }
 
 /*
- * 
+ * Altera no registro passado como parâmetro as informações de entrada.
+ * Fazendo também as verificações no tamanho do lixo a ser inserido.
  */
 void alterarRegistro(regFixo *r, campos *novosValores, int qttNovosValores) {
     r->tamLixo = 0;
 
+    // Para cada novo valor a ser inserido
     for (int i = 0; i < qttNovosValores; i++) {
-        if (!strcmp(novosValores[i].str1, "id")) {
-            if (!strcmp(novosValores[i].str2, "")) {
+        if (!strcmp(novosValores[i].str1, "id")) { // Se for o ID
+            if (!strcmp(novosValores[i].str2, "")) { // Se for nulo
                 r->id = -1;
-            } else {
+            } else { // caso contrário
                 r->id = atoi(novosValores[i].str2);
             }
-        } else if (!strcmp(novosValores[i].str1, "ano")) {
-            if (!strcmp(novosValores[i].str2, "")) {
+        } else if (!strcmp(novosValores[i].str1, "ano")) { // Se for o ano
+            if (!strcmp(novosValores[i].str2, "")) { // Se for nulo
                 r->ano = -1;
-            } else {
+            } else { // caso contrário
                 r->ano = atoi(novosValores[i].str2);
             }
-        } else if (!strcmp(novosValores[i].str1, "qtt")) {
-            if (!strcmp(novosValores[i].str2, "")) {
+        } else if (!strcmp(novosValores[i].str1, "qtt")) { // Se for a quantidade
+            if (!strcmp(novosValores[i].str2, "")) { // Se for nulo
                 r->qtt = -1;
-            } else {
+            } else { // caso contrário
                 r->qtt = atoi(novosValores[i].str2);
             }
-        } else if (!strcmp(novosValores[i].str1, "sigla")) {
-            if (!strcmp(novosValores[i].str2, "")) {
+        } else if (!strcmp(novosValores[i].str1, "sigla")) { // Se for a sigla
+            if (!strcmp(novosValores[i].str2, "")) { // Se for nulo
                 r->sigla[0] = '$';
                 r->sigla[1] = '$';
-            } else {
+            } else { // caso contrário
                 r->sigla[0] = novosValores[i].str2[0];
                 r->sigla[1] = novosValores[i].str2[1];
             }
-        } else if (!strcmp(novosValores[i].str1, "cidade")) {
+        } else if (!strcmp(novosValores[i].str1, "cidade")) { // Se for a cidade
             if (!strcmp(novosValores[i].str2, "")) { // Se for pra remover o campo
-                if (r->tamCidade != -1) { // Existe campo
-                    r->tamLixo += r->tamCidade + 5;
-                    r->tamCidade = -1;
+                if (r->tamCidade != -1) { // Se já existir um campo cidade
+                    r->tamLixo += r->tamCidade + 5; // Adiciona o tamanho dos campos relacionados a cidade ao lixo
+                    r->tamCidade = -1; // Seta como nulo
                 }
             } else { // Se for pra atualizar o campo
-                if (r->tamCidade != -1) { // Existe campo
-                    int novoTamanho = strlen(novosValores[i].str2);
+                if (r->tamCidade != -1) { // Se já existir um campo cidade
+                    int novoTamanho = strlen(novosValores[i].str2); // Armazena o novo tamanho do campo
                     if (r->tamCidade > novoTamanho) { // Se o tamanho do campo for maior que o novo valor
-                        r->tamLixo += r->tamCidade - novoTamanho;
+                        r->tamLixo += r->tamCidade - novoTamanho; // Adiciona a diferença ao lixo
                     }
-                    free(r->cidade);
+                    free(r->cidade); // Libera o espaço em RAM utilizado pelo campo antigo
                 } else { // não existe campo
-                    r->codC5 = '0';
+                    r->codC5 = '0'; // Seta o código do campo como '0' (cidade)
                 }
 
-                r->cidade = strdup(novosValores[i].str2);
-                r->tamCidade = strlen(r->cidade);
+                r->cidade = strdup(novosValores[i].str2); // Faz uma cópia dinâmica do novo valor para o campo
+                r->tamCidade = strlen(r->cidade); // Armazena o tamanho do campo
             }
-        } else if (!strcmp(novosValores[i].str1, "marca")) {
+        } else if (!strcmp(novosValores[i].str1, "marca")) { // Se for a marca
             if (!strcmp(novosValores[i].str2, "")) { // Se for pra remover o campo
-                if (r->tamMarca != -1) { // Existe campo
-                    r->tamLixo += r->tamMarca + 5;
-                    r->tamMarca = -1;
+                if (r->tamMarca != -1) { // Se já existir um campo marca
+                    r->tamLixo += r->tamMarca + 5; // Adiciona o tamanho dos campos relacionados a marca ao lixo
+                    r->tamMarca = -1; // Seta como nulo
                 }
             } else { // Se for pra atualizar o campo
-                if (r->tamMarca != -1) { // Existe campo
-                    int novoTamanho = strlen(novosValores[i].str2);
+                if (r->tamMarca != -1) { // Se já existir um campo marca
+                    int novoTamanho = strlen(novosValores[i].str2); // Armazena o novo tamanho do campo
                     if (r->tamMarca > novoTamanho) { // Se o tamanho do campo for maior que o novo valor
-                        r->tamLixo += r->tamMarca - novoTamanho;
+                        r->tamLixo += r->tamMarca - novoTamanho; // Adiciona a diferença ao lixo
                     }
-                    free(r->marca);
+                    free(r->marca); // Libera o espaço em RAM utilizado pelo campo antigo
                 } else { // não existe campo
-                    r->codC5 = '1';
+                    r->codC5 = '1'; // Seta o código do campo como '1' (marca)
                 }
 
-                r->marca = strdup(novosValores[i].str2);
-                r->tamMarca = strlen(r->marca);
+                r->marca = strdup(novosValores[i].str2); // Faz uma cópia dinâmica do novo valor para o campo
+                r->tamMarca = strlen(r->marca); // Armazena o tamanho do campo
             }
-        } else if (!strcmp(novosValores[i].str1, "modelo")) {
+        } else if (!strcmp(novosValores[i].str1, "modelo")) { // Se for o modelo
             if (!strcmp(novosValores[i].str2, "")) { // Se for pra remover o campo
-                if (r->tamModelo != -1) { // Existe campo
-                    r->tamLixo += r->tamModelo + 5;
-                    r->tamModelo = -1;
+                if (r->tamModelo != -1) { // Se já existir um campo modelo
+                    r->tamLixo += r->tamModelo + 5; // Adiciona o tamanho dos campos relacionados a modelo ao lixo
+                    r->tamModelo = -1; // Seta como nulo
                 }
             } else { // Se for pra atualizar o campo
-                if (r->tamModelo != -1) { // Existe campo
-                    int novoTamanho = strlen(novosValores[i].str2);
+                if (r->tamModelo != -1) { // Se já existir um campo modelo
+                    int novoTamanho = strlen(novosValores[i].str2); // Armazena o novo tamanho do campo
                     if (r->tamModelo > novoTamanho) { // Se o tamanho do campo for maior que o novo valor
-                        r->tamLixo += r->tamModelo - novoTamanho;
+                        r->tamLixo += r->tamModelo - novoTamanho; // Adiciona a diferença ao lixo
                     }
-                    free(r->modelo);
+                    free(r->modelo); // Libera o espaço em RAM utilizado pelo campo antigo
                 } else { // não existe campo
-                    r->codC5 = '2';
+                    r->codC5 = '2'; // Seta o código do campo como '2' (modelo)
                 }
 
-                r->modelo = strdup(novosValores[i].str2);
-                r->tamModelo = strlen(r->modelo);
+                r->modelo = strdup(novosValores[i].str2); // Faz uma cópia dinâmica do novo valor para o campo
+                r->tamModelo = strlen(r->modelo); // Armazena o tamanho do campo
             }
         }
     }
 }
 
 /*
- * 
+ * Atualiza as informações dos registro de acordo com os valores passados como parâmetro,
+ * fazendo os devidos tratamentos para que o registro seja atualizado corretamente.
  */
 void atualizarRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro) {
     bool buscaNoIndex = false;
     bool atualizarIndex = false;
 
-
+    // Verifica se o campo id está nos campos de busca
     for (int i = 0; i < numCampos; i++) {
         if (!strcmp(camposNaLinha[i].str1, "id")) {
             buscaNoIndex = true;
@@ -742,6 +744,7 @@ void atualizarRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaL
         }
     }
 
+    // Verifica se o campo id está nos novos campos
     for (int i = 0; i < numCamposNovoRegistro; i++) {
         if (!strcmp(camposNaLinha[i].str1, "id")) {
             atualizarIndex = true;
@@ -749,8 +752,7 @@ void atualizarRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaL
         }
     }
 
-    if (buscaNoIndex) {
-
+    if (buscaNoIndex) { // Realiza a busca por meio do índice
         int posicaoId;
 
         for (int i = 0; i < numCampos; i++) { // Procura a posição do ID nos campos
@@ -762,17 +764,21 @@ void atualizarRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaL
 
         if (posicaoId == -1) return; // Registro não encontrado
         
-        int RRN = index->lista[posicaoId].posicao;
+        int RRN = index->lista[posicaoId].posicao; // Armazena o RRN do registro
 
-        regFixo *r = lerRegistroFixo(arquivoDados, RRN);
+        regFixo *r = lerRegistroFixo(arquivoDados, RRN); // Lê o registro do arquivo de dados
 
         if (verificaCamposFixos(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
+            // Posiciona a cabeça de leitura para o registro a ser alterado
             fseek(arquivoDados, TAM_CABECALHO_FIXO + (RRN * TAM_REGISTRO_FIXO), SEEK_SET);
 
+            // Faz as alterações no registro com os novos valores
             alterarRegistro(r, camposNovoRegistro, numCamposNovoRegistro);
 
+            // Reinsere o registro no arquivo de dados
             addRegistroFixo(arquivoDados, r);
 
+            // Se o índice foi um dos campos atualizado, atualiza o vetor de indices
             if (atualizarIndex) {
                 index->lista[posicaoId].id = r->id;
 
@@ -780,25 +786,30 @@ void atualizarRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaL
             }
         }
 
-        freeRegistroFixo(r);
+        freeRegistroFixo(r); // Libera o espaço em RAM utilizado pelo registro
 
         return;
     }
+    // Se não buscar no index, então busca percorrendo o arquivo de dados
 
-    // Se não buscar no index, então busca no arquivo de dados
-    int numTotalRRN = getNumeroRegistros(arquivoDados);
-    if (numTotalRRN == 0) return;
+    int numTotalRRN = getNumeroRegistros(arquivoDados); // Armazena o número total de registros no arquivo de dados
+    if (numTotalRRN == 0) return; // Se não houver registros, não faz nada
 
+    // Percorre cada registro do arquivo de dados
     for (int rrn = 0; rrn <= numTotalRRN; rrn++) {
-        regFixo *r = lerRegistroFixo(arquivoDados, rrn);
+        regFixo *r = lerRegistroFixo(arquivoDados, rrn); // Lê o registro do arquivo de dados
 
         if (verificaCamposFixos(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
+            // Posiciona a cabeça de leitura para o registro a ser alterado
             fseek(arquivoDados, TAM_CABECALHO_FIXO + (rrn * TAM_REGISTRO_FIXO), SEEK_SET);
             
+            // Faz as alterações no registro com os novos valores
             alterarRegistro(r, camposNovoRegistro, numCamposNovoRegistro);
+
+            // Reinsere o registro no arquivo de dados
             addRegistroFixo(arquivoDados, r);
         }
 
-        freeRegistroFixo(r);
+        freeRegistroFixo(r); // Libera o espaço em RAM utilizado pelo registro
     }
 }

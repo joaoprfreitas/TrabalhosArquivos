@@ -12,8 +12,10 @@ TODO:
 
       Otimizar funcionalidade 6
       
-      Funcionalidade 8
+      Funcionalidade 8 para registro variável
+
       Verrificar as mensagens de erro a serem printadas (registro inexistente, falha no processamento, ...)
+      
       Colocar tudo em português
       Melhorar modularização
 

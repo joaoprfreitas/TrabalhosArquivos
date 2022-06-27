@@ -7,7 +7,8 @@
 #include <funcionalidades.h>
 #include <funcoesFornecidas.h>
 #include <funcoesFornecidas.h>
-#include<utils.h>
+#include <utils.h>
+
 /*
  * Funcionalidade 1 do trabalho.
  *
@@ -299,7 +300,9 @@ void insereRegistros(char* tipoArquivo, char *nomeArquivoDados, char *nomeArquiv
 }
 
 /*
- * 
+ * Funcionalidade 8 do trabalho.
+ *
+ * Realiza a atualização de registros existentes no arquivo de dados.
  */
 void atualizarRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, campos **camposBuscados, int *numCamposPorLinha, campos **novosValores, int *numCamposPorLinhaNovosValores, int numLinhas) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
@@ -333,6 +336,7 @@ void atualizarRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArq
         return;
     }
 
+    // Altera o status dos arquivos para inconsistentes
     setStatusInconsistente(arquivoDados);
     setStatusInconsistente(arquivoIndex);
 
@@ -340,15 +344,17 @@ void atualizarRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArq
 
     fclose(arquivoIndex);
 
+    // Realiza a atualização para cada par de linhas da entrada
     for (int i = 0; i < numLinhas; i++) {
         realizarAtualizacao(tipoArquivo, arquivoDados, &index, camposBuscados[i], numCamposPorLinha[i], novosValores[i], numCamposPorLinhaNovosValores[i]);
     }
 
+    // Atualiza o arquivo de índices
     arquivoIndex = atualizarArquivoIndex(nomeArquivoIndice, tipoArquivo, index);
 
-    free(index.lista);
+    free(index.lista); // Libera a memória alocada para o vetor de indices
     
-    setStatusConsistente(arquivoDados);
+    setStatusConsistente(arquivoDados); // Marca o arquivo de dados como consistente
 
     fclose(arquivoDados);
     fclose(arquivoIndex);
