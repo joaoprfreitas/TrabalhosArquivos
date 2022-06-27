@@ -379,9 +379,9 @@ void realizarInsercao(char *tipoArquivo, FILE *arquivoDados, index_t *index, dat
 
 void realizarAtualizacao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro) {
     if (!strcmp(tipoArquivo, "tipo1")) {
-        atualizarRegistroFixo(arquivoDados, index,camposNaLinha, numCampos, camposNovoRegistro, numCamposNovoRegistro);
+        atualizarRegistroFixo(arquivoDados, index, camposNaLinha, numCampos, camposNovoRegistro, numCamposNovoRegistro);
         return;
     }
 
-    // atualizarRegistroVariavel();
+    atualizarRegistroVariavel(arquivoDados, index, camposNaLinha, numCampos, camposNovoRegistro, numCamposNovoRegistro);
 }

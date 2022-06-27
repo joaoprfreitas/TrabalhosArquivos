@@ -95,4 +95,6 @@ int getNumRegRemovidosVariavel(FILE *dados);
 void removerRegistroVariavel(FILE *arquivoDados, topo_t *listaTopo, index_t *index, campos *camposNaLinha, int numCampos);
 void inserirRegistroVariavel(FILE *arquivoDados, index_t *index, data_t *data);
 
+void atualizarRegistroVariavel(FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro);
+
 #endif // #REGTAMANHOFIXO_H

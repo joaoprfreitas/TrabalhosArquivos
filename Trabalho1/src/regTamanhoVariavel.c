@@ -561,3 +561,217 @@ void inserirRegistroVariavel(FILE *arquivoDados, index_t *index, data_t *data) {
     // Atualiza o index
     inserirNoIndex(index, idInserido, byteOffSetInserido);
 }
+
+int alterarRegistroVariavel(regVariavel *r, campos *novosValores, int qttNovosValores) {
+    int tamLixo = 0;
+
+    for (int i = 0; i < qttNovosValores; i++) {
+        if (!strcmp(novosValores[i].str1, "id")) {
+            if (!strcmp(novosValores[i].str2, "")) {
+                r->id = -1;
+            } else {
+                r->id = atoi(novosValores[i].str2);
+            }
+        } else if (!strcmp(novosValores[i].str1, "ano")) {
+            if (!strcmp(novosValores[i].str2, "")) {
+                r->ano = -1;
+            } else {
+                r->ano = atoi(novosValores[i].str2);
+            }
+        } else if (!strcmp(novosValores[i].str1, "qtt")) {
+            if (!strcmp(novosValores[i].str2, "")) {
+                r->qtt = -1;
+            } else {
+                r->qtt = atoi(novosValores[i].str2);
+            }
+        } else if (!strcmp(novosValores[i].str1, "sigla")) {
+            if (!strcmp(novosValores[i].str2, "")) {
+                r->sigla[0] = '$';
+                r->sigla[1] = '$';
+            } else {
+                r->sigla[0] = novosValores[i].str2[0];
+                r->sigla[1] = novosValores[i].str2[1];
+            }
+        } else if (!strcmp(novosValores[i].str1, "cidade")) {
+            if (!strcmp(novosValores[i].str2, "")) { // Se for pra remover o campo
+                if (r->tamCidade != -1) { // Existe campo
+                    tamLixo += r->tamCidade + 5;
+                    r->tamCidade = -1;
+                    r->tamanhoRegistro -= r->tamCidade + 5;
+                }
+            } else { // Se for pra atualizar o campo
+                if (r->tamCidade != -1) { // Existe campo
+                    int novoTamanho = strlen(novosValores[i].str2);
+                    if (r->tamCidade > novoTamanho) { // Se o tamanho do campo for maior que o novo valor
+                        tamLixo += r->tamCidade - novoTamanho;
+                        r->tamanhoRegistro -= r->tamCidade - novoTamanho;
+                    }
+                    free(r->cidade);
+                } else { // não existe campo
+                    r->codC5 = '0';
+                    r->tamanhoRegistro += 5 + strlen(novosValores[i].str2);
+                }
+
+                r->cidade = strdup(novosValores[i].str2);
+                r->tamCidade = strlen(r->cidade);
+            }
+        } else if (!strcmp(novosValores[i].str1, "marca")) {
+            if (!strcmp(novosValores[i].str2, "")) { // Se for pra remover o campo
+                if (r->tamMarca != -1) { // Existe campo
+                    tamLixo += r->tamMarca + 5;
+                    r->tamMarca = -1;
+                    r->tamanhoRegistro -= r->tamMarca + 5;
+                }
+            } else { // Se for pra atualizar o campo
+                if (r->tamMarca != -1) { // Existe campo
+                    int novoTamanho = strlen(novosValores[i].str2);
+                    if (r->tamMarca > novoTamanho) { // Se o tamanho do campo for maior que o novo valor
+                        tamLixo += r->tamMarca - novoTamanho;
+                        r->tamanhoRegistro -= r->tamMarca - novoTamanho;
+                    }
+                    free(r->marca);
+                } else { // não existe campo
+                    r->codC5 = '1';
+                    r->tamanhoRegistro += 5 + strlen(novosValores[i].str2);
+                }
+
+                r->marca = strdup(novosValores[i].str2);
+                r->tamMarca = strlen(r->marca);
+            }
+        } else if (!strcmp(novosValores[i].str1, "modelo")) {
+            if (!strcmp(novosValores[i].str2, "")) { // Se for pra remover o campo
+                if (r->tamModelo != -1) { // Existe campo
+                    tamLixo += r->tamModelo + 5;
+                    r->tamModelo = -1;
+                    r->tamanhoRegistro -= r->tamModelo + 5;
+                }
+            } else { // Se for pra atualizar o campo
+                if (r->tamModelo != -1) { // Existe campo
+                    int novoTamanho = strlen(novosValores[i].str2);
+                    if (r->tamModelo > novoTamanho) { // Se o tamanho do campo for maior que o novo valor
+                        tamLixo += r->tamModelo - novoTamanho;
+                        r->tamanhoRegistro -= r->tamModelo - novoTamanho;
+                    }
+                    free(r->modelo);
+                } else { // não existe campo
+                    r->codC5 = '2';
+                    r->tamanhoRegistro += 5 + strlen(novosValores[i].str2);
+                }
+
+                r->modelo = strdup(novosValores[i].str2);
+                r->tamModelo = strlen(r->modelo);
+            }
+        }
+    }
+
+    return tamLixo;
+}
+
+void atualizarRegistroVariavel(FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro) {
+    bool buscaNoIndex = false;
+    bool atualizarIndex = false;
+
+    for (int i = 0; i < numCampos; i++) {
+        if (!strcmp(camposNaLinha[i].str1, "id")) {
+            buscaNoIndex = true;
+            break;
+        }
+    }
+
+    for (int i = 0; i < numCamposNovoRegistro; i++) {
+        if (!strcmp(camposNaLinha[i].str1, "id")) {
+            atualizarIndex = true;
+            break;
+        }
+    }
+
+    if (buscaNoIndex) {
+        int posicaoId;
+
+        for (int i = 0; i < numCampos; i++) { // Procura a posição do ID nos campos
+            if (!strcmp(camposNaLinha[i].str1, "id")) {
+                posicaoId = buscaBinariaIndex(atoi(camposNaLinha[i].str2), index); // Realiza a busca binária passando o ID
+                break;
+            }
+        }
+
+        if (posicaoId == -1) return; // Registro não encontrado
+        
+        long long int byteOffSet = index->lista[posicaoId].posicao;
+
+        fseek(arquivoDados, byteOffSet, SEEK_SET); // Posiciona o ponteiro no registro
+        regVariavel *r = lerRegistroVariavel(arquivoDados); // Lê o registro
+
+        if (verificaCamposVariaveis(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
+            int tamRegistroOriginal = r->tamanhoRegistro;
+
+            int tamLixo = alterarRegistroVariavel(r, camposNovoRegistro, numCamposNovoRegistro);
+
+            fseek(arquivoDados, byteOffSet, SEEK_SET); // Posiciona o ponteiro no registro
+            if (r->tamanhoRegistro > tamRegistroOriginal) { // Remove e insere o registro
+                
+                // REMOVER
+                
+                // INSERIR
+
+
+            } else { // Atualiza o registro
+                addRegistroVariavel(arquivoDados, r); // Adiciona o registro
+
+                for (int i = 0; i < tamLixo; i++) {
+                    fwrite("$", sizeof(char), 1, arquivoDados);
+                }
+            }
+
+            if (atualizarIndex) {
+                index->lista[posicaoId].id = r->id;
+
+                quickSortIndex(index, 0, index->tamanho - 1);
+            }
+        }
+
+        freeRegistroVariavel(r);
+
+        return;
+    }
+
+    long long int proxByteOffSet = getProxByteOffset(arquivoDados);
+    if (proxByteOffSet == 0) return;
+
+    fseek(arquivoDados, TAM_CABECALHO_VARIAVEL, SEEK_SET); // Posiciona o ponteiro para o primeiro registro
+
+    do {
+        long long int byteOffSetAtual = ftell(arquivoDados);
+
+        regVariavel *r = lerRegistroVariavel(arquivoDados);
+
+        if (verificaCamposVariaveis(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
+            int tamRegistroOriginal = r->tamanhoRegistro;
+
+            int tamLixo = alterarRegistroVariavel(r, camposNovoRegistro, numCamposNovoRegistro);
+
+            if (r->tamanhoRegistro > tamRegistroOriginal) { // Remove e insere o registro
+
+                // remove
+                // insere
+
+            } else { // Atualiza o registro
+                fseek(arquivoDados, byteOffSetAtual, SEEK_SET); // Posiciona o ponteiro no registro
+                addRegistroVariavel(arquivoDados, r); // Adiciona o registro
+
+                for (int i = 0; i < tamLixo; i++) {
+                    fwrite("$", sizeof(char), 1, arquivoDados);
+                }
+            }
+
+            // if (atualizarIndex) {
+            //     index->lista[posicaoId].id = r->id;
+
+            //     quickSortIndex(index, 0, index->tamanho - 1);
+            // }
+        }
+
+        freeRegistroVariavel(r);
+
+    } while(proxByteOffSet != ftell(arquivoDados));
+}

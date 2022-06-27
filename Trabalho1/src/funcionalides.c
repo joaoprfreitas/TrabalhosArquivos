@@ -134,6 +134,7 @@ void getRegistroFixo(char *nomeArquivo, char *tipoArquivo, int RRN) {
     fclose(f);
 }
 
+
 void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
         printf("Falha no processamento do arquivo.\n");
@@ -202,19 +203,9 @@ void removerRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArqui
     index_t index = lerArquivoIndex(tipoArquivo, arquivoIndex);
 
     fclose(arquivoIndex);
-
-    // for (int i = 0; i < index.tamanho; i++) {
-    //     printf("%d %lld\n", index.lista[i].id, index.lista[i].posicao);
-    // }
-
+    
     for (int i = 0; i < numLinhas; i++) {
         realizarRemocao(tipoArquivo, arquivoDados, &index, camposBuscados[i], numCamposPorLinha[i]);
-
-        // printf("LINHA %d: ", i);
-        // for (int j = 0; j < numCamposPorLinha[i]; j++) {
-        //     printf("%s %s ", camposBuscados[i][j].str1, camposBuscados[i][j].str2);
-        // }
-        // printf("\n");
     }
 
     arquivoIndex = atualizarArquivoIndex(nomeArquivoIndice, tipoArquivo, index);

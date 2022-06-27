@@ -8,8 +8,10 @@ DONE: Funcionalidade 1
 
 TODO:
       Resolver erros no valgrind da funcionalidade 6
-      Otimizar funcionalidade 6
       Verificar erro no caso 20 do trabalho 1
+
+      Otimizar funcionalidade 6
+      
       Funcionalidade 8
       Verrificar as mensagens de erro a serem printadas (registro inexistente, falha no processamento, ...)
       Colocar tudo em português

@@ -137,6 +137,10 @@ campos* capturaCampos(int n){
     return n_campos;
 }
 
+/*
+ * Realiza uma busca binária na lista de indices
+ * em busca da posição de um determinado id.
+ */
 int buscaBinariaIndex(int id, index_t *index) {
     int inicio = 0, meio;
     int fim = index->tamanho;
@@ -170,6 +174,9 @@ void insertionSort(topo_t *listaTopo) {
     }
 }
 
+/*
+ * 
+ */
 int getPosListaTopo(topo_t lista, int tamanhoRegistro) {
     for (int i = 0; i < lista.tamanhoLista; i++) {
         if (lista.lista[i].tamanho <= tamanhoRegistro) {
@@ -179,6 +186,11 @@ int getPosListaTopo(topo_t lista, int tamanhoRegistro) {
     return -1; // insere no final
 }
 
+/*
+ * Realiza a inserção de um novo elemento na lista de topo.
+ * Após a inserção, realiza uma ordenação decrescente da lista
+ * por meio de um insertionSort (neste caso, O(n))
+ */
 void inserirListaTopo(topo_t *lista, int pos, int tamanhoRegistro) {
     lista->lista = realloc(lista->lista, (lista->tamanhoLista + 1) * sizeof(campoTopo_t));
 
@@ -189,6 +201,11 @@ void inserirListaTopo(topo_t *lista, int pos, int tamanhoRegistro) {
     insertionSort(lista);
 }
 
+/*
+ * Faz a leitura de uma linha de dados da entrada padrão.
+ * Com as informações lidas, preenche a estrutura data_t.
+ * Retorna essa estrutura.
+ */
 data_t lerLinhaDadosInserir() {
     char campo[100];
     data_t data;
@@ -206,7 +223,7 @@ data_t lerLinhaDadosInserir() {
             break;
 
         case 1:
-            if (strcmp(campo, "")) {
+            if (strcmp(campo, "")) { // Se não for nulo
                 data.ano = atoi(campo);
             } else {
                 data.ano = -1;
@@ -214,7 +231,7 @@ data_t lerLinhaDadosInserir() {
             break;
         
         case 2:
-            if (strcmp(campo, "")) {
+            if (strcmp(campo, "")) { // Se não for nulo
                 data.qtt = atoi(campo);
             } else {
                 data.qtt = -1;
@@ -222,7 +239,7 @@ data_t lerLinhaDadosInserir() {
             break;
         
         case 3:
-            if (strcmp(campo, "")) {
+            if (strcmp(campo, "")) { // Se não for nulo
                 data.sigla[0] = campo[0];
                 data.sigla[1] = campo[1];
             } else {
@@ -232,27 +249,15 @@ data_t lerLinhaDadosInserir() {
             break;
 
         case 4:
-            // if (strcmp(campo, "")) {
-                data.cidade = strdup(campo);
-            // } else {
-            //     data.cidade = strdup("");
-            // }
+            data.cidade = strdup(campo); // Faz uma cópia dinâmica da string
             break;
 
         case 5:
-            // if (strcmp(campo, "")) {
-                data.marca = strdup(campo);
-            // } else {
-            //     data.marca = strdup("");
-            // }
+            data.marca = strdup(campo); // Faz uma cópia dinâmica da string
             break;
 
         case 6:
-            // if (strcmp(campo, "")) {
-                data.modelo = strdup(campo);
-            // } else {
-            //     data.modelo = strdup("");
-            // }
+            data.modelo = strdup(campo); // Faz uma cópia dinâmica da string
             break;
         
         default:
@@ -263,6 +268,10 @@ data_t lerLinhaDadosInserir() {
     return data;
 }
 
+/*
+ * Realiza uma ordenação decrescente na lista de indices
+ * por meio de um quickSort
+ */
 void quickSortIndex(index_t *index, int ini, int fim) {
     // Caso base: vetor de tamanho 0 ou 1
     if (ini >= fim) return;
@@ -292,8 +301,8 @@ void quickSortIndex(index_t *index, int ini, int fim) {
             index->lista[j] = tmp;
         }
     }
-        // posicionar o pivo na sua posição ja ordenada
-        // a posição do pivo será a j
+    // posicionar o pivo na sua posição ja ordenada
+    // a posição do pivo será a j
     tmp = index->lista[p];
     index->lista[p] = index->lista[j];
     index->lista[j] = tmp;

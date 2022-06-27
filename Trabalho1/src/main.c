@@ -70,16 +70,17 @@ int main() {
             scanf("%s ", parametro2);  // nome arquivo de indice
             scanf("%d\r\n", &n); // numero de linhas a serem lidas
 
-            camposBuscados = malloc(sizeof(campos *) * n);
-            int *numCampos = malloc(sizeof(int) * n);
+            camposBuscados = malloc(sizeof(campos *) * n); // Cria um vetor para as informações de cada linha
+            int *numCampos = malloc(sizeof(int) * n); // Cria um vetor para o numero de campos de cada linha
 
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < n; i++) { // Preenche o vetor com as informações de cada linha
                 scanf("%d ", &numCampos[i]);
                 camposBuscados[i] = capturaCampos(numCampos[i]);
             }
 
             removerRegistros(tipoArquivo, parametro1, parametro2, camposBuscados, numCampos, n);
 
+            // Libera a memória auxiliar utilizada
             for (int i = 0; i < n; i++) {
                 free(camposBuscados[i]);
             }
@@ -131,21 +132,6 @@ int main() {
                 novosValores[i] = capturaCampos(numCampos[i]);
             }
 
-            // for (int i = 0; i < n; i++) {
-                
-            //     printf("BUSCA: ");
-            //     for (int j = 0; j < numCampos[i]; j++) {
-            //         printf("%s %s|", camposBuscados[i][j].str1, camposBuscados[i][j].str2);
-            //     }
-            //     printf("\n");
-
-            //     printf("NOVOS VALORES: ");
-            //     for (int j = 0; j < numCamposNovosValores[i]; j++) {
-            //         printf("%s %s|", novosValores[i][j].str1, novosValores[i][j].str2);
-            //     }
-            //     printf("\n");
-            // }
-
             atualizarRegistros(tipoArquivo, parametro1, parametro2, camposBuscados, numCampos, novosValores, numCamposNovosValores, n);
 
             for (int i = 0; i < n; i++) {
@@ -158,46 +144,6 @@ int main() {
             free(novosValores);
             free(numCamposNovosValores);
             
-            break;
-
-        case 9: // TESTE, REMOVER DPS
-            scanf("%s\r\n", parametro1); // nome do arquivo de indice
-
-            FILE *meu = fopen(parametro1, "rb");
-
-            fseek(meu, 1, SEEK_SET);
-
-            int id1, rrn, eof;
-
-            do {
-                fread(&id1, sizeof(int), 1, meu);
-                eof = fread(&rrn, sizeof(int), 1, meu);
-
-                printf("%d %d\n", id1, rrn);
-
-            } while (eof != 0);
-
-            fclose(meu);
-
-            break;
-
-        case 10:
-            scanf("%s\r\n", parametro1); // nome do arquivo binario
-            
-            FILE *f = fopen(parametro1, "rb");
-            fseek(f, 20125, SEEK_SET);
-            char removido;
-            int tamanho;
-            long long int prox;
-
-            fread(&removido, sizeof(char), 1, f);
-            fread(&tamanho, sizeof(int), 1, f);
-            fread(&prox, sizeof(long long int), 1, f);
-
-            printf("%c %d %lld\n", removido, tamanho, prox);
-
-            fclose(f);
-
             break;
     
         default:

@@ -313,7 +313,6 @@ regFixo *lerRegistroFixo(FILE *f, int RRN) {
     return r;
 }
 
-
 /*
  * Faz a impressão dos dados de um determinado registro fixo
  * caso não esteja marcado como logicamente removido.
