@@ -234,7 +234,9 @@ void removerRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArqui
 }
 
 /*
- * 
+ * Funcionalidade 7 do trabalho.
+ *
+ * Realiza a inserção de novos registros no arquivo de dados.
  */
 void insereRegistros(char* tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, data_t *data, int numRegistros) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
@@ -268,22 +270,26 @@ void insereRegistros(char* tipoArquivo, char *nomeArquivoDados, char *nomeArquiv
         return;
     }
 
+    // Altera o status dos arquivos para inconsistentes
     setStatusInconsistente(arquivoDados);
     setStatusInconsistente(arquivoIndex);
 
+    // Faz a leitura do arquivo de índices
     index_t index = lerArquivoIndex(tipoArquivo, arquivoIndex);
 
     fclose(arquivoIndex);
 
+    // Realiza a inserção para cada registro
     for (int i = 0; i < numRegistros; i++) {
         realizarInsercao(tipoArquivo, arquivoDados, &index, &data[i]);
     }
 
+    // Atualiza o arquivo de índices
     arquivoIndex = atualizarArquivoIndex(nomeArquivoIndice, tipoArquivo, index);
 
-    free(index.lista);
+    free(index.lista); // Libera a memória alocada para o vetor de indices
     
-    setStatusConsistente(arquivoDados);
+    setStatusConsistente(arquivoDados); // Marca o arquivo de dados como consistente
 
     fclose(arquivoDados);
     fclose(arquivoIndex);

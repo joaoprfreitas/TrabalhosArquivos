@@ -533,33 +533,44 @@ void removerRegistroVariavel(FILE *arquivoDados, topo_t *listaTopo, index_t *ind
 
         }
         freeRegistroVariavel(r); // Libera o registro
-        
+
     } while(proxByteOffSet != ftell(arquivoDados));
 
 }
 
-// TODO: atualizar o index, inserindo ordenado a nova posição do novo registro
+/*
+ * Realiza a inserção de um novo registro de tamanho variável com base nas informações de entrada,
+ * verificando se é possível reaproveitar espaços de registros removidos.
+ * 
+ * Se for possível, acessa o registro removido e insere as informações do novo registro.
+ * Se não, insere no final do arquivo.
+ */
 void inserirRegistroVariavel(FILE *arquivoDados, index_t *index, data_t *data) {
     int idInserido;
     long long int byteOffSetInserido;
 
-    long long int topo = getTopoVariavel(arquivoDados);
+    long long int topo = getTopoVariavel(arquivoDados); // Pega o topo da lista de encadeamento no cabeçalho
     long long int novoTopo;
 
-    regVariavel r = formatRegistroVariavel(data);
+    regVariavel r = formatRegistroVariavel(data); // Formata o registro com as informações de entrada
 
     if (topo != -1) { // Insere na posição do topo
-        fseek(arquivoDados, topo + 1, SEEK_SET); // Posiciona a cabeça de leitura para o registro
+        // Posiciona a cabeça de leitura para o tamanho do registro na posição do topo
+        fseek(arquivoDados, topo + 1, SEEK_SET);
 
         int tamanhoRegistro;
-        fread(&tamanhoRegistro, sizeof(int), 1, arquivoDados);
-        fread(&novoTopo, sizeof(long long int), 1, arquivoDados);
+        fread(&tamanhoRegistro, sizeof(int), 1, arquivoDados); // Lê o tamanho do registro
+        fread(&novoTopo, sizeof(long long int), 1, arquivoDados); // Lê o byteoffset do encadeamento desse registro
 
+        // Se o tamanho do registro existente for maior que o tamanho do registro a ser inserido
         if (tamanhoRegistro > r.tamanhoRegistro) { // Insere nessa posição
-            int tamLixo = tamanhoRegistro - r.tamanhoRegistro;
-            fseek(arquivoDados, topo, SEEK_SET); // Posiciona a cabeça de leitura para o registro
-            r.tamanhoRegistro = tamanhoRegistro;
-            addRegistroVariavel(arquivoDados, &r);
+
+            int tamLixo = tamanhoRegistro - r.tamanhoRegistro; // Calcula o tamanho do lixo a ser colocado ($)
+            
+            r.tamanhoRegistro = tamanhoRegistro; // Atualiza o tamanho do registro
+
+            fseek(arquivoDados, topo, SEEK_SET); // Posiciona a cabeça de leitura para o início do registro
+            addRegistroVariavel(arquivoDados, &r); // Insere o registro
 
             for (int i = 0; i < tamLixo; i++) { // Preenche o restante do registro com lixo
                 fwrite("$", sizeof(char), 1, arquivoDados);
@@ -568,33 +579,38 @@ void inserirRegistroVariavel(FILE *arquivoDados, index_t *index, data_t *data) {
             setTopoVariavel(arquivoDados, novoTopo); // Atualiza o topo
             setNumRegRemovidosVariavel(arquivoDados, getNumRegRemovidosVariavel(arquivoDados) - 1); // Decrementa o número de registros removidos
 
-            idInserido = r.id;
-            byteOffSetInserido = topo;
+            idInserido = r.id; // Pega o id do registro inserido
+            byteOffSetInserido = topo; // Pega o byteOffset do registro inserido
 
+            // Libera o espaço utilizado pelo registro
             free(r.cidade);
             free(r.marca);
             free(r.modelo);
 
-            inserirNoIndex(index, idInserido, byteOffSetInserido); // Insere no index
+            // Insere no index o ID e o byteOffset do registro inserido
+            inserirNoIndex(index, idInserido, byteOffSetInserido);
 
             return;
         }
         
-    } // Insere no final
+    }
+    // Insere no final do arquivo
+
     fseek(arquivoDados, 0, SEEK_END); // Posiciona no final do arquivo
-    byteOffSetInserido = ftell(arquivoDados);
+    byteOffSetInserido = ftell(arquivoDados); // Pega o byteOffset da posição em que o registro será inserido
 
-    addRegistroVariavel(arquivoDados, &r);
+    addRegistroVariavel(arquivoDados, &r); // Insere o registro no arquivo
 
-    idInserido = r.id;
+    idInserido = r.id; // Pega o id do registro inserido
 
+    // Libera o espaço utilizado pelo registro
     free(r.cidade);
     free(r.marca);
     free(r.modelo);
 
-    setProxByteOffset(arquivoDados, ftell(arquivoDados)); // Atualiza o próximo RRN no registro de cabeçalho
+    setProxByteOffset(arquivoDados, ftell(arquivoDados)); // Atualiza o próximo byteoffset no registro de cabeçalho
 
-    // Atualiza o index
+    // Insere no index o ID e byteOffSet do registro inserido
     inserirNoIndex(index, idInserido, byteOffSetInserido);
 }
 

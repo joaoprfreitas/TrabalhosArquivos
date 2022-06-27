@@ -330,14 +330,21 @@ FILE *atualizarArquivoIndex(char *nomeIndex, char *tipoArquivo, index_t index) {
     return novoIndex;
 }
 
+/*
+ * Insere as informações de um novo registro no vetor de indices.
+ * Realiza uma ordenação nesse vetor.
+ */
 void inserirNoIndex(index_t *index, int id, long long int posicao) {
+    // Cria uma nova posição
     index->lista = realloc(index->lista, (index->tamanho + 1) * sizeof(index_t));
 
+    // Insere as informações no vetor
     index->lista[index->tamanho].id = id;
     index->lista[index->tamanho].posicao = posicao;
 
     index->tamanho = index->tamanho + 1;
 
+    // Realiza um quicksort para ordenar o vetor de indices
     quickSortIndex(index, 0, index->tamanho - 1);
 }
 
@@ -408,10 +415,11 @@ void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, index_t *index, camp
 }
 
 /*
- * 
+ * Verifica o tipo de arquivo, chamando a respectiva função para
+ * realizar a inserção do novo registro.
  */
 void realizarInsercao(char *tipoArquivo, FILE *arquivoDados, index_t *index, data_t *data) {
-    if (!strcmp(tipoArquivo, "tipo1")) {
+    if (!strcmp(tipoArquivo, "tipo1")) { // Se for do tipo 1
         inserirRegistroFixo(arquivoDados, index, data);
         return;
     }

@@ -96,14 +96,16 @@ int main() {
 
             scanf("%d\r\n", &n); // numero de registros a serem inseridos
 
-            data_t *data = malloc(sizeof(data_t) * n);
+            data_t *data = malloc(sizeof(data_t) * n); // Cria um vetor para as informações de cada linha
 
+            // Preenche o vetor com as informações de cada linha
             for (int i = 0; i < n; i++) {
                 data[i] = lerLinhaDadosInserir();
             }
 
             insereRegistros(tipoArquivo, parametro1, parametro2, data, n);
 
+            // Libera a memória auxiliar utilizada
             for (int i = 0; i < n; i++) {
                 free(data[i].cidade);
                 free(data[i].marca);

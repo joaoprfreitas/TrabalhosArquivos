@@ -575,53 +575,58 @@ void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLin
 }
 
 /*
+ * Realiza a inserção de um novo registro de tamanho fixo com base nas informações de entrada,
+ * verificando se é possível reaproveitar espaços de registros removidos.
  * 
+ * Se for possível, acessa o registro removido e insere as informações do novo registro.
+ * Se não, insere no final do arquivo.
  */
 void inserirRegistroFixo(FILE *arquivoDados, index_t *index, data_t *data) {
     int idInserido;
     long long int rrnInserido;
 
+    regFixo r = formatRegistroFixo(data); // Passa as informações de entrada para a estrutura do registro
+
     if (getNumRegRemovidosFixo(arquivoDados) > 0) { // Insere na posição do topo
-        int topo = getTopoFixo(arquivoDados);
-        int novoTopo;
+        int topo = getTopoFixo(arquivoDados); // Armazena o 'topo' do cabeçalho
+        int novoTopo; 
 
-        fseek(arquivoDados, TAM_CABECALHO_FIXO + (topo * TAM_REGISTRO_FIXO) + 1, SEEK_SET); // Posiciona na posição do topo do registro
-        fread(&novoTopo, sizeof(int), 1, arquivoDados); // Lê a posição do próximo registro vazio
+        fseek(arquivoDados, TAM_CABECALHO_FIXO + (topo * TAM_REGISTRO_FIXO) + 1, SEEK_SET); // Posiciona a cabeça de leitura no 'topo' do registro
+        fread(&novoTopo, sizeof(int), 1, arquivoDados); // Lê o conteúdo da posição do 'topo' do registro
 
-        fseek(arquivoDados, TAM_CABECALHO_FIXO + (topo * TAM_REGISTRO_FIXO), SEEK_SET); // Posiciona na posição em que será inserido o registro
+        // Posiciona a cabeça de leitura na posição em que será inserido o registro
+        fseek(arquivoDados, TAM_CABECALHO_FIXO + (topo * TAM_REGISTRO_FIXO), SEEK_SET);
 
-        regFixo r = formatRegistroFixo(data);
-        addRegistroFixo(arquivoDados, &r);
+        addRegistroFixo(arquivoDados, &r); // Insere o registro no arquivo
 
-        idInserido = r.id;
-        rrnInserido = topo;
+        idInserido = r.id; // Armazena o id do registro inserido
+        rrnInserido = topo; // Armazena o RRN do registro inserido
 
-        free(r.cidade);
-        free(r.marca);
-        free(r.modelo);
+        // Retira do encadamento o RRN do registro que foi inserido
+        setTopoFixo(arquivoDados, novoTopo);
 
-        setTopoFixo(arquivoDados, novoTopo); // Atualiza o topo no registro de cabeçalho
-        setNumRegRemovidosFixo(arquivoDados, getNumRegRemovidosFixo(arquivoDados) - 1); // Atualiza o número de registros removidos no registro de cabeçalho
+        // Atualiza o número de registros removidos no registro de cabeçalho
+        setNumRegRemovidosFixo(arquivoDados, getNumRegRemovidosFixo(arquivoDados) - 1); 
 
-    } else { // Insere no final
+    } else { // Insere no final do arquivo
         fseek(arquivoDados, 0, SEEK_END); // Posiciona no final do arquivo
+ 
+        addRegistroFixo(arquivoDados, &r); // Insere o registro no arquivo
 
-        regFixo r = formatRegistroFixo(data);
-        addRegistroFixo(arquivoDados, &r);
+        idInserido = r.id; // Armazena o id do registro inserido
 
-        idInserido = r.id;
-
-        free(r.cidade);
-        free(r.marca);
-        free(r.modelo);
-
-        int proxRRN = getProxRRN(arquivoDados);
+        int proxRRN = getProxRRN(arquivoDados); // Armazena o próximo disponível RRN do arquivo
 
         setProxRRN(arquivoDados, getProxRRN(arquivoDados) + 1); // Atualiza o próximo RRN no registro de cabeçalho
-        rrnInserido = proxRRN;
+        rrnInserido = proxRRN; // Armazena o RRN do registro inserido
     }
 
-    // Atualiza o index
+    // Libera o espaço em RAM utilizado pelo registro
+    free(r.cidade);
+    free(r.marca);
+    free(r.modelo);
+
+    // Insere no index o ID e RRN do registro inserido
     inserirNoIndex(index, idInserido, rrnInserido);
 }
 
