@@ -134,7 +134,11 @@ void getRegistroFixo(char *nomeArquivo, char *tipoArquivo, int RRN) {
     fclose(f);
 }
 
-
+/*
+ * Funcionalidade 5 do trabalho.
+ *
+ * Cria o arquivo de indices de um determinado arquivos de dados.
+ */
 void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
         printf("Falha no processamento do arquivo.\n");
@@ -157,7 +161,7 @@ void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice) {
 
     realizarIndexacao(tipoArquivo, dados, index);
 
-    setStatusConsistente(index);
+    setStatusConsistente(index); // Marca o arquivo como consistente
 
     fclose(dados);
     fclose(index);

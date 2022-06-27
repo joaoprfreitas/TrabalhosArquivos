@@ -408,17 +408,21 @@ int verificaCamposFixos(regFixo* r, campos* n_campos, int totalCampos){
     return -1;
 }
 
+/*
+ * Preenche o arquivo de indices com os IDs e RRNs dos registros fixos.
+ */
 void realizarIndexacaoRegFixo(FILE *dados, FILE *index) {
-    int numTotalRRN = getNumeroRegistros(dados);
+    int numTotalRRN = getNumeroRegistros(dados); // Lê do cabeçalho o número de registros
 
-    if (numTotalRRN == 0) return;
+    if (numTotalRRN == 0) return; // Se não houver, retorna
 
+    // Para cada RRN
     for (int i = 0; i <= numTotalRRN; i++) {
-        regFixo *r = lerRegistroFixo(dados, i);
+        regFixo *r = lerRegistroFixo(dados, i); // Lê o registro
         
-        if (r->removido == '0') {
-            fwrite(&r->id, sizeof(int), 1, index); // ID
-            fwrite(&i, sizeof(int), 1, index); // RRN
+        if (r->removido == '0') { // Se não estiver removido
+            fwrite(&r->id, sizeof(int), 1, index); // Escreve o id do registro
+            fwrite(&i, sizeof(int), 1, index); // Escreve o RRN do registro
         }
 
         freeRegistroFixo(r);

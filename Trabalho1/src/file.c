@@ -258,14 +258,18 @@ void buscarRegistroPorCampos(FILE *f, char *tipoArquivo, campos* n_campos, int n
     if (!achou) printf("Registro inexistente.\n");
 }
 
+/*
+ * Verifica o tipo do arquivo, chamando a função adequada
+ * para realizar a indexação do arquivo.
+ */
 void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
-    setStatusInconsistente(index);
+    setStatusInconsistente(index); // Marca o arquivo de indices como inconsistente
 
-    if (!strcmp(tipoArquivo, "tipo1")) {
+    if (!strcmp(tipoArquivo, "tipo1")) { // Se for do tipo 1
         realizarIndexacaoRegFixo(dados, index);
         return;
     }
-    
+    // Caso contrário
     realizarIndexacaoRegVariavel(dados, index);
 }
 

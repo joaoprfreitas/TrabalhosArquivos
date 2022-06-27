@@ -379,25 +379,29 @@ int verificaCamposVariaveis(regVariavel* r, campos* n_campos, int totalCampos) {
     return -1;
 }
 
+/*
+ * Preenche o arquivo de indices com os IDs e bytes offset dos registros.
+ */
 void realizarIndexacaoRegVariavel(FILE *dados, FILE *index) {
-    int proxByteOffSet = getProxByteOffset(dados);
-    if (proxByteOffSet == 0) return;
+    int proxByteOffSet = getProxByteOffset(dados); // Pega o próximo byte disponível do arquivo de dados
+    if (proxByteOffSet == 0) return; // Se não houver mais bytes disponíveis, não faz nada
 
-    fseek(dados, TAM_CABECALHO_VARIAVEL, SEEK_SET); // Posiciona o ponteiro para o primeiro registro'
+    fseek(dados, TAM_CABECALHO_VARIAVEL, SEEK_SET); // Posiciona o ponteiro para o primeiro registro
 
-    long long int byteOffSetAtual = TAM_CABECALHO_VARIAVEL;
+    long long int byteOffSetAtual = TAM_CABECALHO_VARIAVEL; // Armazena o byteoffset atual
 
+    // Enquanto não chegar no último registro
     do {
-        regVariavel *r = lerRegistroVariavel(dados);
+        regVariavel *r = lerRegistroVariavel(dados); // Lê o registro atual
 
-        if (r->removido == '0') {
-            fwrite(&r->id, sizeof(int), 1, index); // ID
-            fwrite(&byteOffSetAtual, sizeof(long long int), 1, index); // RRN
+        if (r->removido == '0') { // Se não estiver removido
+            fwrite(&r->id, sizeof(int), 1, index); // Armazena o ID do registro
+            fwrite(&byteOffSetAtual, sizeof(long long int), 1, index); // Armazena o byteoffset do registro
         }
 
         freeRegistroVariavel(r);
 
-        byteOffSetAtual = ftell(dados);
+        byteOffSetAtual = ftell(dados); // Altera a posição atual
     } while(proxByteOffSet != byteOffSetAtual);
 }
 
