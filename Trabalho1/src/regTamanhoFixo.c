@@ -429,6 +429,10 @@ void realizarIndexacaoRegFixo(FILE *dados, FILE *index) {
     }
 }
 
+/*
+ * Acessa a posição do topo no registro de cabeçalho.
+ * Retorna o conteúdo dessa posição
+ */
 int getTopoFixo(FILE *arquivoDados) {
     fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
     int topo;
@@ -437,11 +441,18 @@ int getTopoFixo(FILE *arquivoDados) {
     return topo;
 }
 
+/*
+ * Escreve no topo no registro de cabeçalho o valor passado.
+ */
 void setTopoFixo(FILE *arquivoDados, int topo) {
     fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
     fwrite(&topo, sizeof(int), 1, arquivoDados);
 }
 
+/*
+ * Acessa o campo numRegRemovidos no cabeçalho.
+ * Retorna o conteúdo dessa posição
+ */
 int getNumRegRemovidosFixo(FILE *arquivoDados) {
     fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
     int numRemovidos;
@@ -450,15 +461,25 @@ int getNumRegRemovidosFixo(FILE *arquivoDados) {
     return numRemovidos;
 }
 
+/*
+ * Escreve no campo numRegRemovidos no cabeçalho o valor passado.
+ */
 void setNumRegRemovidosFixo(FILE *arquivoDados, int numRemovidos) {
     fseek(arquivoDados, CABECALHO_NUM_REG_REMOVIDOS_FIXO, SEEK_SET);
     fwrite(&numRemovidos, sizeof(int), 1, arquivoDados);
 }
 
-// setar os lixos????
+/*
+ * Realiza a remoção de registros de tamanho fixo com base nos campos de busca,
+ * verificando se é possível ou não o acesso por meio do indice.
+ * Se for possível, acessa o registro e o remove desde que satisfaça os campos de busca.
+ * Se não, percorre o arquivo de dados em busca de registros que satisfaçam os campos de busca.
+ * Se encontrar, remove o registro.
+ */
 void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos) {
     bool buscaNoIndex = false;
 
+    // Percorre os campos de busca para identificar a presença do id
     for (int i = 0; i < numCampos; i++) {
         if (!strcmp(camposNaLinha[i].str1, "id")) {
             buscaNoIndex = true;
@@ -466,73 +487,96 @@ void removerRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLin
         }
     }
 
-    if (buscaNoIndex) { // supondo q o id sempre será o primeiro campo
-        int posicaoId = buscaBinariaIndex(atoi(camposNaLinha[0].str2), index);
+    // Se encontrar o id, busca no indice
+    if (buscaNoIndex) { 
+        int posicaoId; // Posição do id no vetor de indices
+        for (int i = 0; i < numCampos; i++) { // Procura a posição do ID nos campos
+            if (!strcmp(camposNaLinha[i].str1, "id")) {
+                posicaoId = buscaBinariaIndex(atoi(camposNaLinha[i].str2), index); // Realiza a busca binária passando o ID
+                break;
+            }
+        }
+
         if (posicaoId == -1) return; // Registro não encontrado
         
-        int RRN = index->lista[posicaoId].posicao;
+        int RRN = index->lista[posicaoId].posicao; // Acessa o RRN do registro por meio do vetor de indices
 
-        regFixo *r = lerRegistroFixo(arquivoDados, RRN);
+        regFixo *r = lerRegistroFixo(arquivoDados, RRN); // Faz a leitura do registro
 
         if (verificaCamposFixos(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
-            int byteRegistro = TAM_CABECALHO_FIXO + (RRN * TAM_REGISTRO_FIXO);
-            int topo = getTopoFixo(arquivoDados);
-            fseek(arquivoDados, byteRegistro, SEEK_SET);
+            int byteRegistro = TAM_CABECALHO_FIXO + (RRN * TAM_REGISTRO_FIXO); // Armazena o byte inicial do registro
+            int topo = getTopoFixo(arquivoDados); // Armazena o 'topo' do cabeçalho
 
-            fwrite("1", sizeof(char), 1, arquivoDados);
+            fseek(arquivoDados, byteRegistro, SEEK_SET); // Posiciona a cabeça de leitura no inicio do registro a ser removido
+
+            fwrite("1", sizeof(char), 1, arquivoDados); // Marca como logicamente removido
+
+            // Realiza o encadeamento do registro removido
             fwrite(&topo, sizeof(int), 1, arquivoDados);
-
             setTopoFixo(arquivoDados, RRN);
+
+            // Incrementa no cabeçalho o número de registros removidos
             setNumRegRemovidosFixo(arquivoDados, getNumRegRemovidosFixo(arquivoDados) + 1);
 
-            // shift no index
+            // Realiza o shift no index, removendo a posição do registro removido
             for (int i = posicaoId; i < (*index).tamanho - 1; i++) {
                 (*index).lista[i] = (*index).lista[i + 1];
             }
-
             (*index).tamanho--;
+
         }
 
-        freeRegistroFixo(r);
+        freeRegistroFixo(r); // Libera o espaço utilizado pelo registro
 
         return; // removido com sucesso
     }
+    // Se não possui campo id
 
-    int numTotalRRN = getNumeroRegistros(arquivoDados);
-    if (numTotalRRN == 0) return;
+    int numTotalRRN = getNumeroRegistros(arquivoDados); // Armazena o total de registros no arquivo
+    if (numTotalRRN == 0) return; // Se não houver, retorna
 
+    // Percorre cada registro do arquivo
     for (int rrn = 0; rrn <= numTotalRRN; rrn++) {
-        regFixo *r = lerRegistroFixo(arquivoDados, rrn);
+        regFixo *r = lerRegistroFixo(arquivoDados, rrn); // Faz a leitura do registro
 
-        if (r->removido == '0' && (verificaCamposFixos(r, camposNaLinha, numCampos) == 0)) { // Registro encontrado
-            int byteRegistro = TAM_CABECALHO_FIXO + (rrn * TAM_REGISTRO_FIXO);
-            int topo = getTopoFixo(arquivoDados);
-            fseek(arquivoDados, byteRegistro, SEEK_SET);
+        if (verificaCamposFixos(r, camposNaLinha, numCampos) == 0) { // Registro encontrado
+            int byteRegistro = TAM_CABECALHO_FIXO + (rrn * TAM_REGISTRO_FIXO); // Armazena o byte inicial do registro
+            int topo = getTopoFixo(arquivoDados); // Armazena o 'topo' do cabeçalho
 
-            fwrite("1", sizeof(char), 1, arquivoDados);
+            fseek(arquivoDados, byteRegistro, SEEK_SET); // Posiciona a cabeça de leitura no inicio do registro a ser removido
+
+            fwrite("1", sizeof(char), 1, arquivoDados); // Marca como logicamente removido
+
+            // Realiza o encadeamento do registro removido
             fwrite(&topo, sizeof(int), 1, arquivoDados);
-
             setTopoFixo(arquivoDados, rrn);
+
+            // Incrementa no cabeçalho o número de registros removidos
             setNumRegRemovidosFixo(arquivoDados, getNumRegRemovidosFixo(arquivoDados) + 1);
 
-            // shift no index
-            for (int i = 0; i < (*index).tamanho; i++) { // Procura qual o id do rrn removido
+            // Busca no index o RRN do registro removido
+            for (int i = 0; i < (*index).tamanho; i++) {
 
                 if ((*index).lista[i].posicao == rrn) { // se encontrou
-                    for (int j = i; j < (*index).tamanho - 1; j++) { // realiza o shift do index
+                    // Realiza o shift no index, removendo a posição do registro removido
+                    for (int j = i; j < (*index).tamanho - 1; j++) {
                         (*index).lista[j] = (*index).lista[j + 1];
                     }
                     (*index).tamanho--;
+
                     break;
                 }
             }
+
         }
 
-        freeRegistroFixo(r);
+        freeRegistroFixo(r); // Libera o espaço utilizado pelo registro
     }
 }
 
-// TODO: atualizar o index, inserindo ordenado a nova posição do novo registro
+/*
+ * 
+ */
 void inserirRegistroFixo(FILE *arquivoDados, index_t *index, data_t *data) {
     int idInserido;
     long long int rrnInserido;
@@ -581,6 +625,9 @@ void inserirRegistroFixo(FILE *arquivoDados, index_t *index, data_t *data) {
     inserirNoIndex(index, idInserido, rrnInserido);
 }
 
+/*
+ * 
+ */
 void alterarRegistro(regFixo *r, campos *novosValores, int qttNovosValores) {
     r->tamLixo = 0;
 
@@ -675,6 +722,9 @@ void alterarRegistro(regFixo *r, campos *novosValores, int qttNovosValores) {
     }
 }
 
+/*
+ * 
+ */
 void atualizarRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro) {
     bool buscaNoIndex = false;
     bool atualizarIndex = false;

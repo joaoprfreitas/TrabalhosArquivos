@@ -273,38 +273,55 @@ void realizarIndexacao(char *tipoArquivo, FILE *dados, FILE *index) {
     realizarIndexacaoRegVariavel(dados, index);
 }
 
+/*
+ * Passa para RAM as informações do arquivo de indices com base no tipo de registro.
+ * Realiza uma ordenação no vetor criado para assegurar uma posterior busca binária.
+ * 
+ * Retorna o vetor criado
+ */
 index_t lerArquivoIndex(char *tipoArquivo, FILE *arquivoIndex) {
     index_t index;
 
-    // fseek(index, 1, SEEK_SET); // Posiciona o ponteiro para o primeiro index
     index.tamanho = 0;
     index.lista = NULL;
 
+    // Define o tamanho do campo tamanhoPosicao com base no tipo de registro
     int tamanhoPosicao = (!strcmp(tipoArquivo, "tipo1")) ? sizeof(int) : sizeof(long long int);
+
     int idAuxiliar;
+    // Enquanto não chegar no fim do arquivo de indices
     while (fread(&idAuxiliar, sizeof(int), 1, arquivoIndex) != 0) {
-        index.lista = realloc(index.lista, (index.tamanho + 1) * sizeof(index_t));
+        index.lista = realloc(index.lista, (index.tamanho + 1) * sizeof(index_t)); // Cria uma nova posição
 
-        index.lista[index.tamanho].id = idAuxiliar;
+        index.lista[index.tamanho].id = idAuxiliar; // insere o id no vetor
 
-        index.lista[index.tamanho].posicao = 0; // Inicializa a variável
-        fread(&index.lista[index.tamanho].posicao, tamanhoPosicao, 1, arquivoIndex);
+        index.lista[index.tamanho].posicao = 0; // Inicializa a posição (evitar erros de compilação)
+        fread(&index.lista[index.tamanho].posicao, tamanhoPosicao, 1, arquivoIndex); // insere a posição no vetor
 
         index.tamanho++;
     }
 
+    // Realiza um quicksort para ordenar o vetor de indices
     quickSortIndex(&index, 0, index.tamanho - 1);
 
     return index;
 }
 
+/*
+ * Escreve em um novo arquivo (de mesmo nome do indice), escrevendo
+ * as informações do vetor de indices atualizado.
+ * 
+ * Retorna o ponteiro do novo arquivo de indices.
+ */
 FILE *atualizarArquivoIndex(char *nomeIndex, char *tipoArquivo, index_t index) {
-    FILE *novoIndex = criarArquivoBinario(nomeIndex);
+    FILE *novoIndex = criarArquivoBinario(nomeIndex); // Cria um novo arquivo, de mesmo nome
 
+    // Define o tamanho do campo tamanhoPosicao com base no tipo de registro
     int tamanhoPosicao = (!strcmp(tipoArquivo, "tipo1")) ? sizeof(int) : sizeof(long long int);
 
-    setStatusConsistente(novoIndex);
+    setStatusConsistente(novoIndex); // Marca o arquivo de indices como consistente
 
+    // Percorre todos os indices do vetor, inserindo as informações no arquivo
     for (int i = 0; i < index.tamanho; i++) {
         fwrite(&index.lista[i].id, sizeof(int), 1, novoIndex);
         fwrite(&index.lista[i].posicao, tamanhoPosicao, 1, novoIndex);
@@ -324,19 +341,27 @@ void inserirNoIndex(index_t *index, int id, long long int posicao) {
     quickSortIndex(index, 0, index->tamanho - 1);
 }
 
+/*
+ * Percorre a lista encadeada de topos no arquivo de dados,
+ * inserindo as informações de cada topo em um vetor de topos.
+ * 
+ * Retorna o vetor de topos
+ */
 topo_t leituraTopoRegVariavel(FILE *arquivoDados) {
     topo_t lista;
-    lista.tamanhoLista = getNumRegRemovidosVariavel(arquivoDados);
-    lista.lista = malloc(lista.tamanhoLista * sizeof(campoTopo_t));
+    lista.tamanhoLista = getNumRegRemovidosVariavel(arquivoDados); // Pega o número de registros removidos
+    lista.lista = malloc(lista.tamanhoLista * sizeof(campoTopo_t)); // Cria um vetor de tamanho igual ao número de registros removidos
 
-    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET);
+    fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET); // Posiciona a cabeça de leitura para o topo no cabeçalho
     
+    // Para cada registro removido
     for (int i = 0; i < lista.tamanhoLista; i++) {
         fread(&lista.lista[i].topo, sizeof(long long int), 1, arquivoDados); // Lê o byteoffset
         fseek(arquivoDados, lista.lista[i].topo, SEEK_SET); // Vai para o byteoffset
+
         char removido;
-        fread(&removido, sizeof(char), 1, arquivoDados);
-        if (removido == '1') { // Verifica se está removido
+        fread(&removido, sizeof(char), 1, arquivoDados); // Lê o campo 'removido'
+        if (removido == '1') { // Se estiver marcado como removido
             fread(&lista.lista[i].tamanho, sizeof(int), 1, arquivoDados); // Lê o tamanho do registro
         }
     }
@@ -344,34 +369,47 @@ topo_t leituraTopoRegVariavel(FILE *arquivoDados) {
     return lista;
 }
 
+/*
+ * Escreve no arquivo de dados a lista de topos, realizando o encadeamento.
+ */
 void atualizarListaTopo(FILE *arquivoDados, topo_t lista) {
     fseek(arquivoDados, CABECALHO_TOPO, SEEK_SET); // Muda a cabeça de leitura para o topo
 
+    // Para cada posição da lista
     for (int i = 0; i < lista.tamanhoLista; i++) {
         fwrite(&lista.lista[i].topo, sizeof(long long int), 1, arquivoDados); // Escreve o topo
-        fseek(arquivoDados, lista.lista[i].topo + 5, SEEK_SET); // Vai para o topo no registro
+        fseek(arquivoDados, lista.lista[i].topo + 5, SEEK_SET); // Acessa o topo no registro
     }
 
-    long long int valorFinal = -1;
+    long long int valorFinal = -1; // Final da lista
 
-    fwrite(&valorFinal, sizeof(long long int), 1, arquivoDados); // No topo do último registro, escreve -1
+    fwrite(&valorFinal, sizeof(long long int), 1, arquivoDados); // No topo do último registro, marca como final da lista
 }
 
+/*
+ * Verifica o tipo de arquivo, chamando a respectiva função para
+ * realizar a remoção de registros.
+ */
 void realizarRemocao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos) {
-    if (!strcmp(tipoArquivo, "tipo1")) {
+    if (!strcmp(tipoArquivo, "tipo1")) { // Se for do tipo 1
         removerRegistroFixo(arquivoDados, index, camposNaLinha, numCampos);
         return;
     }
+    // Caso contrário
 
-    topo_t listaTopo = leituraTopoRegVariavel(arquivoDados);
+    topo_t listaTopo = leituraTopoRegVariavel(arquivoDados); // Faz a leitura da lista de topos
 
     removerRegistroVariavel(arquivoDados, &listaTopo, index, camposNaLinha, numCampos);
 
+    // Passa para o arquivo de dados a lista de topos
     atualizarListaTopo(arquivoDados, listaTopo);
 
-    free(listaTopo.lista);
+    free(listaTopo.lista); // Libera o espaço utilizado em RAM
 }
 
+/*
+ * 
+ */
 void realizarInsercao(char *tipoArquivo, FILE *arquivoDados, index_t *index, data_t *data) {
     if (!strcmp(tipoArquivo, "tipo1")) {
         inserirRegistroFixo(arquivoDados, index, data);
@@ -381,6 +419,9 @@ void realizarInsercao(char *tipoArquivo, FILE *arquivoDados, index_t *index, dat
     inserirRegistroVariavel(arquivoDados, index, data);
 }
 
+/*
+ * 
+ */
 void realizarAtualizacao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro) {
     if (!strcmp(tipoArquivo, "tipo1")) {
         atualizarRegistroFixo(arquivoDados, index, camposNaLinha, numCampos, camposNovoRegistro, numCamposNovoRegistro);

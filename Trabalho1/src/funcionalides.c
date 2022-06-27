@@ -169,6 +169,11 @@ void criarIndex(char *tipoArquivo, char *arquivoDados, char *arquivoIndice) {
     binarioNaTela(arquivoIndice);
 }
 
+/*
+ * Funcionalidade 6 do trabalho.
+ *
+ * Realiza a remoção de determinados registros com base nos campos desejados.
+ */
 void removerRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, campos **camposBuscados, int *numCamposPorLinha, int numLinhas) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
         printf("Falha no processamento do arquivo.\n");
@@ -201,6 +206,7 @@ void removerRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArqui
         return;
     }
 
+    // Altera o status dos arquivos para inconsistentes
     setStatusInconsistente(arquivoDados);
     setStatusInconsistente(arquivoIndex);
 
@@ -208,15 +214,17 @@ void removerRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArqui
 
     fclose(arquivoIndex);
     
+    // Para cada linha da entrada, realiza a remoção
     for (int i = 0; i < numLinhas; i++) {
         realizarRemocao(tipoArquivo, arquivoDados, &index, camposBuscados[i], numCamposPorLinha[i]);
     }
-
+    
+    // Atualiza o arquivo de índices
     arquivoIndex = atualizarArquivoIndex(nomeArquivoIndice, tipoArquivo, index);
 
-    free(index.lista);
+    free(index.lista); // Libera a memória alocada para o vetor de indices
     
-    setStatusConsistente(arquivoDados);
+    setStatusConsistente(arquivoDados); // Marca o arquivo de dados como consistente
 
     fclose(arquivoDados);
     fclose(arquivoIndex);
@@ -225,7 +233,9 @@ void removerRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArqui
     binarioNaTela(nomeArquivoIndice);
 }
 
-//TODO: Ver pq o getTopo só pega 0 (caso 9 e 10)
+/*
+ * 
+ */
 void insereRegistros(char* tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, data_t *data, int numRegistros) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
         printf("Falha no processamento do arquivo.\n");
@@ -282,6 +292,9 @@ void insereRegistros(char* tipoArquivo, char *nomeArquivoDados, char *nomeArquiv
     binarioNaTela(nomeArquivoIndice);
 }
 
+/*
+ * 
+ */
 void atualizarRegistros(char *tipoArquivo, char *nomeArquivoDados, char *nomeArquivoIndice, campos **camposBuscados, int *numCamposPorLinha, campos **novosValores, int *numCamposPorLinhaNovosValores, int numLinhas) {
     if (strcmp(tipoArquivo, "tipo1") && strcmp(tipoArquivo, "tipo2")) { // Verifica se o tipo é válido
         printf("Falha no processamento do arquivo.\n");
