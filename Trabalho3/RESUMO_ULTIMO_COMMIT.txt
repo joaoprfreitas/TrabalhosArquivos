@@ -1,0 +1,11 @@
+DONE: 
+
+TODO:
+      Funcionalidade 9
+      Funcionalidade 10
+      Funcionalidade 11
+
+
+hexdump -Cv binarioX.bin > my.hex
+hexdump -Cv depois/binarioX.bin > answer.hex
+diff my.hex answer.hex
