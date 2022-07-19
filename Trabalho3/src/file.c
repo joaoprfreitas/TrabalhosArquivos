@@ -4,6 +4,7 @@
  * Nome: Guilherme Pacheco de Oliveira Souza, N USP: 11797091
  */
 #include <file.h>
+#include <arvoreB.h>
 
 void setDadosRegistroFixo(FILE *file, char *csvFileName);
 void setDadosRegistroVariavel(FILE *file, char *csvFileName);
@@ -439,4 +440,49 @@ void realizarAtualizacao(char *tipoArquivo, FILE *arquivoDados, index_t *index, 
     // Caso contrário
 
     atualizarRegistroVariavel(arquivoDados, index, camposNaLinha, numCampos, camposNovoRegistro, numCamposNovoRegistro);
+}
+
+/*
+ * Verifica o tipo do arquivo, chamando a função adequada
+ * para realizar a indexação do arquivo.
+ */
+void realizarIndexacaoArvoreB(char *tipoArquivo, FILE *dados, FILE *index) {
+    setStatusInconsistente(index); // Marca o arquivo de indices como inconsistente
+
+    if (!strcmp(tipoArquivo, "tipo1")) { // Se for do tipo 1
+        realizarIndexacaoRegFixo(dados, index);
+        return;
+    }
+    // Caso contrário
+    realizarIndexacaoRegVariavel(dados, index);
+}
+
+void buscarRegistroIndex(FILE *dados, FILE *index, char *tipoArquivo, int id) {
+    int RRN_encontrado;
+    int posChavePaginaDisco;
+
+    int noRaiz = getNoRaiz(index); // Pega o nó raiz do índice
+
+    buscaArvoreB(index, tipoArquivo, noRaiz, id, &RRN_encontrado, &posChavePaginaDisco); // Busca o registro no índice
+
+    if (RRN_encontrado == -1) { // Se não encontrar o registro
+        printf("Registro não encontrado.\n");
+        return;
+    }
+
+    // Lê o registro do disco
+    pagina p = lerPaginaDisco(index, tipoArquivo, RRN_encontrado);
+
+    long long int posicao = p.chaves[posChavePaginaDisco][1]; // Pega a posição do registro no arquivo de 
+    
+    if (!strcmp(tipoArquivo, "tipo1")) { // Se for do tipo 1
+        regFixo *r = lerRegistroFixo(dados, (int) posicao); // Lê o registro do arquivo de dados
+        imprimirRegistroFixo(r); // Imprime o registro
+        freeRegistroFixo(r);
+        return;
+    }
+    fseek(dados, posicao, SEEK_SET); // Posiciona o ponteiro no registro
+    regVariavel *r = lerRegistroVariavel(dados); // Lê o registro do arquivo de dados
+    imprimirRegistroVariavel(r); // Imprime o registro
+    freeRegistroVariavel(r);
 }

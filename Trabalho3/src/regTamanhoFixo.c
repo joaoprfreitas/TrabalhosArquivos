@@ -813,3 +813,24 @@ void atualizarRegistroFixo(FILE *arquivoDados, index_t *index, campos *camposNaL
         freeRegistroFixo(r); // Libera o espaço em RAM utilizado pelo registro
     }
 }
+
+/*
+ * Preenche o arquivo de indices com os IDs e RRNs dos registros fixos.
+ */
+void realizarIndexacaoArvoreBRegFixo(FILE *dados, FILE *index) {
+    int numTotalRRN = getNumeroRegistros(dados); // Lê do cabeçalho o número de registros
+
+    if (numTotalRRN == 0) return; // Se não houver, retorna
+
+    // Para cada RRN
+    for (int i = 0; i <= numTotalRRN; i++) {
+        regFixo *r = lerRegistroFixo(dados, i); // Lê o registro
+        
+        if (r->removido == '0') { // Se não estiver removido
+            fwrite(&r->id, sizeof(int), 1, index); // Escreve o id do registro
+            fwrite(&i, sizeof(int), 1, index); // Escreve o RRN do registro
+        }
+
+        freeRegistroFixo(r);
+    }
+}

@@ -1,8 +1,8 @@
 DONE: 
+      Funcionalidade 10
 
 TODO:
       Funcionalidade 9
-      Funcionalidade 10
       Funcionalidade 11
 
 

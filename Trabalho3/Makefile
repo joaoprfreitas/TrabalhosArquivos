@@ -13,3 +13,6 @@ clean:
 
 valgrind:
 	valgrind --tool=memcheck --leak-check=full --track-origins=yes --show-leak-kinds=all --show-reachable=yes ./$(BIN)
+
+zip:
+	zip -r programaTrab.zip Makefile ./src/ ./include/

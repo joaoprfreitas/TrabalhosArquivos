@@ -19,6 +19,9 @@ int main() {
 
     int RRN; // Valor do RRN a ser buscado
     int n; // Numero de campos
+    int id; // ID do registro a ser buscado
+
+    char aux[10];
 
     campos *n_campos; // Vetor dos campos a serem buscados
     campos **camposBuscados;
@@ -157,6 +160,12 @@ int main() {
             break;
 
         case 10:
+            scanf("%s ", parametro1); // nome do arquivo de dados
+            scanf("%s ", parametro2);  // nome arquivo de indice
+            scanf("%s", aux); // meio de busca (ID)
+            scanf("%d", &id); // valor do ID
+
+            buscarRegistro(tipoArquivo, parametro1, parametro2, id);
 
             break;
 

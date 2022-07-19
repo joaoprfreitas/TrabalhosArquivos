@@ -36,4 +36,6 @@ void realizarInsercao(char *tipoArquivo, FILE *arquivoDados, index_t *index, dat
 void inserirNoIndex(index_t *index, int id, long long int posicao);
 void realizarAtualizacao(char *tipoArquivo, FILE *arquivoDados, index_t *index, campos *camposNaLinha, int numCampos, campos *camposNovoRegistro, int numCamposNovoRegistro);
 
+void buscarRegistroIndex(FILE *dados, FILE *index, char *tipoArquivo, int id);
+
 #endif // FILE_H
