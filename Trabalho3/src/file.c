@@ -457,9 +457,16 @@ void realizarIndexacaoArvoreB(char *tipoArquivo, FILE *dados, FILE *index) {
     realizarIndexacaoRegVariavel(dados, index);
 }
 
+/*
+ * Realiza a busca por um id na árvore B.
+ * Se não for encontrado, retorna uma mensagem de erro.
+ * Se for encontrado, faz a leitura da página de disco que o contém, 
+ * obtendo a posição desse registro no arquivo de dados.
+ * Em seguida, realiza o acesso direto a esse registro, realizando a devida impressão.
+ */
 void buscarRegistroIndex(FILE *dados, FILE *index, char *tipoArquivo, int id) {
-    int RRN_encontrado;
-    int posChavePaginaDisco;
+    int RRN_encontrado; // RRN ou byteoffset da árvore B
+    int posChavePaginaDisco; // Posição do registro no arquivo de dados
 
     int noRaiz = getNoRaiz(index); // Pega o nó raiz do índice
 
@@ -481,6 +488,7 @@ void buscarRegistroIndex(FILE *dados, FILE *index, char *tipoArquivo, int id) {
         freeRegistroFixo(r);
         return;
     }
+    
     fseek(dados, posicao, SEEK_SET); // Posiciona o ponteiro no registro
     regVariavel *r = lerRegistroVariavel(dados); // Lê o registro do arquivo de dados
     imprimirRegistroVariavel(r); // Imprime o registro

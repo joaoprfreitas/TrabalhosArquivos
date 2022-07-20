@@ -17,8 +17,8 @@ typedef struct pagina_st {
     char tipoNo;
     int numChaves;
     // Fazer cast para int ao escrever
-    long long int chaves[ORDEM_ARVORE_B][2]; // [0] = valor, [1] = pos (rrn ou byteoffset)
-    int filhos[ORDEM_ARVORE_B + 1];
+    long long int chaves[ORDEM_ARVORE_B - 1][2]; // [0] = valor, [1] = pos (rrn ou byteoffset)
+    int filhos[ORDEM_ARVORE_B];
 } pagina;
 
 typedef struct no_fixo_st {
